@@ -10,7 +10,11 @@ services:
     links:
       - php
   php:
-    build: .docker/php
+    build: 
+      context: .docker/php
+      args:
+        - WITH_XDEBUG=true
+    env_file: .env
     volumes:
       - .:/var/www
       - .docker/php/php.ini:/usr/local/etc/php/conf.d/zzz-php.ini
