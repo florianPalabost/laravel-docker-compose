@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="m-b-md">
-                    Current time: {{ $current_time }}
+                    Current time:
                 </div>
 
                 <div class="links">
