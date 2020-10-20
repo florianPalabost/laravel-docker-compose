@@ -16,10 +16,8 @@ class Anime extends Model
         'subtype',
         'status',
         'posterImage',
-        'coverImage',
         'episodeCount',
         'episodeLength',
-        'youtubeVideoId',
-        'showType'
+        'youtubeVideoId'
     ];
 }

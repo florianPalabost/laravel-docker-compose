@@ -20,14 +20,13 @@ class CreateAnimesTable extends Migration
             $table->string('rating')->nullable();
             $table->string('startDate')->nullable();
             $table->string('endDate')->nullable();
-            $table->enum('subtype', ['ONA', 'OVA', 'TV', 'movie', 'music', 'special'])->nullable();
+            $table->enum('subtype', ['ONA', 'OVA', 'TV', 'Movie', 'Music', 'special'])->nullable();
             $table->enum('status', ['current', 'finished', 'tba', 'unreleased', 'upcoming'])->nullable();
             $table->string('posterImage')->nullable();
             $table->string('coverImage')->nullable();
             $table->integer('episodeCount')->nullable();
-            $table->integer('episodeLength')->nullable();
+            $table->string('episodeLength')->nullable();
             $table->string('youtubeVideoId')->nullable();
-            $table->enum('showType', ['ONA', 'OVA', 'TV', 'movie', 'music', 'special'])->nullable();
             $table->timestamps();
         });
     }

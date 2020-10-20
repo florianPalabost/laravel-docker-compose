@@ -43,12 +43,14 @@ class ImportAnime implements ShouldQueue
         Log::debug('call ::::' . $uri);
         $promise = $client->getAsync($uri);
         $response = $promise->wait();
+        sleep(3);
         $content = $response->getBody(true)->getContents();
         $content = json_decode($content);
 
         // transform result to rpz Anime model
         // save in db
         $this->updateAttributes($this->anime, $content);
+
 
     }
 
@@ -59,11 +61,11 @@ class ImportAnime implements ShouldQueue
         $anime->rating = $content->score;
         $anime->startDate = $content->aired->prop->from->year;
         $anime->endDate = $content->aired->prop->to->year;
-//        $anime->subtype = $content->type;
+        $anime->subtype = $content->type;
 //        $anime->status = $content->status;
         $anime->posterImage = $content->image_url;
         $anime->episodeCount = $content->episodes;
-//        $anime->episodeLength = $content->duration;
+        $anime->episodeLength = $content->duration;
         $anime->youtubeVideoId = $content->trailer_url;
 
         $anime->save();

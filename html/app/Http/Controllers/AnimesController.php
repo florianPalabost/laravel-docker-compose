@@ -118,13 +118,14 @@ class AnimesController extends Controller
     }
 
     public function import() {
+        set_time_limit(6000);
         // get all ids for import animes with jitsu api thanks to a json map file
         $content = $this->retrieveJson();
 
-        for ($i = 0;$i < 3; $i++)  {
+        for ($i = 0;$i < count($content); $i++)  {
             $id = strval($content[$i]['mal_id']);
-            // add anime id to queue
-            $this->logger->debug('start : ' . $id);
+            // add id to queue
+            Log::debug('start : ' . $id);
             $tmpAnime = new Anime();
             $tmpAnime->anime_id = $id;
             try {
@@ -137,9 +138,9 @@ class AnimesController extends Controller
                 $this->dispatch(new ImportAnime($tmpAnime));
             }
             catch (\Exception $e) {
-                $this->logger->error($e);
+                Log::error($e);
             } catch (\Throwable $err) {
-                $this->logger->error($err);
+                Log::error($err);
             }
         }
 
@@ -151,7 +152,7 @@ class AnimesController extends Controller
             $json = Storage::disk('local')->get('animeMapping_full.json');
             return json_decode($json, true);
         } catch (FileNotFoundException $e) {
-            $this->logger->error($e);
+            Log::error($e);
             return $e;
         }
     }
