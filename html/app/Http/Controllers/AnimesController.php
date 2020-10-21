@@ -42,12 +42,13 @@ class AnimesController extends Controller
 
         $animes = [];
         $animes = $this->animeService->retrieveAnimes();
+
         // save animes retrieved in cache
 
         // filters ?
 
         // user ?
-        return null;
+        return view('animes.index', compact('animes'));
     }
 
     /**
@@ -58,6 +59,7 @@ class AnimesController extends Controller
     public function create()
     {
         //
+        return view('animes.create');
     }
 
     /**
@@ -117,6 +119,7 @@ class AnimesController extends Controller
         //
     }
 
+    // TODO route only with admin access
     public function import() {
         set_time_limit(6000);
         // get all ids for import animes with jitsu api thanks to a json map file
