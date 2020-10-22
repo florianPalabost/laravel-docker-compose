@@ -8,7 +8,7 @@ use App\Services\AnimeService;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Storage;
 
 class AnimesController extends Controller
@@ -21,9 +21,9 @@ class AnimesController extends Controller
     /**
      * AnimesController constructor.
      * @param AnimeService $animeService
-     * @param Log $logger
+     * @param Logger $logger
      */
-    public function __construct(AnimeService $animeService, Log $logger)
+    public function __construct(AnimeService $animeService, Logger $logger)
     {
         $this->animeService = $animeService;
         $this->logger = $logger;
@@ -37,10 +37,6 @@ class AnimesController extends Controller
      */
     public function index()
     {
-        // paginated result || infinite scroll ?
-        // TODO create retrieveAnimes() to call api endpoint
-
-        $animes = [];
         $animes = $this->animeService->retrieveAnimes();
 
         // save animes retrieved in cache
@@ -76,13 +72,12 @@ class AnimesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $title
      */
-    public function show($id)
+    public function show($title)
     {
-        // dont take the id but the title of the anime
-        // TODO retrieve anime info
+        $anime = $this->animeService->retrieveAnime($title);
+        return view('animes.show', compact('anime'));
     }
 
     /**
@@ -128,7 +123,7 @@ class AnimesController extends Controller
         for ($i = 0;$i < count($content); $i++)  {
             $id = strval($content[$i]['mal_id']);
             // add id to queue
-            Log::debug('start : ' . $id);
+            $this->logger->debug('start : ' . $id);
             $tmpAnime = new Anime();
             $tmpAnime->anime_id = $id;
             try {
@@ -141,9 +136,9 @@ class AnimesController extends Controller
                 $this->dispatch(new ImportAnime($tmpAnime));
             }
             catch (\Exception $e) {
-                Log::error($e);
+                $this->logger->error($e);
             } catch (\Throwable $err) {
-                Log::error($err);
+                $this->logger->error($err);
             }
         }
 
@@ -155,7 +150,7 @@ class AnimesController extends Controller
             $json = Storage::disk('local')->get('animeMapping_full.json');
             return json_decode($json, true);
         } catch (FileNotFoundException $e) {
-            Log::error($e);
+            $this->logger->error($e);
             return $e;
         }
     }
