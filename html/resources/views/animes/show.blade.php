@@ -10,14 +10,19 @@
         <div class="row justify-content-center mt-5">
             @if(!empty($anime->posterImage) && !empty($anime->title))
             <div class="col">
-                @if(!empty($anime->youtubeVideoId))
-                    <a class="popup-youtube img-container" href="{{$anime->youtubeVideoId}}">
-                        <img class="img-circle" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
-                        <i @if(!empty($anime->youtubeVideoId)) class="far fa-play-circle fa-5x play"></i>@endif
-                    </a>
+                <div class="img-container">
+                 @if(!empty($anime->youtubeVideoId))
+                        <img class="image" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
+                    <div class="overlay">
+                        <a class="popup-youtube icon" href="{{$anime->youtubeVideoId}}">
+                            <i @if(!empty($anime->youtubeVideoId)) class="far fa-play-circle "></i>@endif
+                        </a>
+                    </div>
                 @else
-                    <img class="img-circle" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
+                        <img class="img-circle" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
                 @endif
+                </div>
+
             </div>
             @endif
             <div class="col">
@@ -64,32 +69,44 @@
 @endsection
 @section('css')
     <style>
-
         .img-container {
-            /*position: absolute;*/
+            position: relative;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .img-container img:hover {
-            opacity: 0.5;
-            z-index: 501;
-        }
-
-        .img-container img:hover + i {
+        .image {
             display: block;
-            z-index: 500;
+            width: 100%;
+            height: auto;
         }
 
-        .img-container i {
-            display: none;
+        .img-container:hover .overlay {
+            opacity: 1;
+        }
+        .icon {
+            color: red;
+            font-size: 100px;
             position: absolute;
-            margin-left:43%;
-            margin-top:40%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            text-align: center;
         }
 
-        .img-container img {
-            /*position:absolute;*/
-
+        .overlay {
+            position: absolute;
+            top: 50%;
+            bottom: 0;
+            left: 50%;
+            right: 0;
+            height: 10%;
+            width: 25%;
+            opacity: 0;
+            transition: .3s ease;
         }
-
+        .icon:hover {
+            color: red;
+        }
     </style>
 @endsection
