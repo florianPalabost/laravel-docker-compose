@@ -4,3 +4,9 @@ html/.idea/
 html/public/css/app.css
 
 html/public/js/app.js
+
+html/storage/anime_index.index-wal
+
+html/storage/anime_index.index-shm
+
+html/storage/anime_index.index
