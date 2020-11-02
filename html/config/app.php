@@ -165,7 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+//        Ehann\LaravelRediSearch\RediSearchServiceProvider::class,
         /*
          * Application Service Providers...
          */
