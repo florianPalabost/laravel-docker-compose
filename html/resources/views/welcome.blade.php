@@ -1,103 +1,19 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
+@section('title')
+    Accueil
+@endsection
+@section('content')
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <p class="w-100 text-justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sed dictum justo, ut suscipit ligula. Morbi ultricies magna libero, eget laoreet nisl blandit feugiat. Aenean quis interdum elit. Cras elementum enim sed quam blandit, eget vehicula sapien dictum. Nam placerat, tortor quis elementum sagittis, nulla risus finibus nibh, eu congue ex ipsum id leo. Mauris id fringilla tortor, a tincidunt purus. Proin tortor enim, vehicula vitae gravida sit amet, aliquam sed dui. Nunc at erat hendrerit, pharetra arcu non, hendrerit velit. Mauris vitae lectus quis erat semper lacinia nec eu enim. Vestibulum tempor vitae est commodo faucibus. Nam fringilla metus nec lectus vehicula tristique. Vivamus porta justo et dui pulvinar, non malesuada leo elementum. Suspendisse vehicula eget sem in faucibus. Nam id pulvinar augue, at rhoncus est.
 
-        <title>Laravel</title>
+                    Quisque in est ac dui suscipit condimentum id at augue. Cras mattis accumsan metus in consequat. Quisque ac varius mi. Maecenas eleifend tempus elit, sed iaculis dolor. Etiam accumsan non tortor lobortis malesuada. Duis lacus quam, hendrerit ac mauris et, consequat facilisis est. Vivamus blandit massa quis vulputate varius.
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="m-b-md">
-                    Current time:
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+                    Nunc vitae scelerisque ligula. Fusce scelerisque sapien non ultricies lacinia. Quisque elementum mattis nulla, id tincidunt dolor ullamcorper ac. Mauris nisl nisi, varius sed suscipit sed, hendrerit sed augue. Praesent suscipit, arcu sed laoreet pretium, est enim iaculis eros, sit amet malesuada mauris leo posuere massa. Phasellus sed suscipit justo. Fusce ligula nisl, ultricies at lectus id, tincidunt luctus velit. In hac habitasse platea dictumst. Pellentesque aliquam diam leo, vel posuere tortor congue facilisis. Fusce molestie pulvinar tellus, a varius tortor dignissim quis. Nullam eu vulputate velit.
+                </p>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+@endsection

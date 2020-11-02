@@ -8,35 +8,80 @@
 <div class="container">
     @if(!empty($anime))
         <div class="row justify-content-center mt-5">
-            @if(!empty($anime->posterImage) && !empty($anime->title))
+            @if(!empty($anime->poster_image) && !empty($anime->title))
             <div class="col">
                 <div class="img-container">
-                 @if(!empty($anime->youtubeVideoId))
-                        <img class="image" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
-                    <div class="overlay">
-                        <a class="popup-youtube icon" href="{{$anime->youtubeVideoId}}">
-                            <i @if(!empty($anime->youtubeVideoId)) class="far fa-play-circle "></i>@endif
-                        </a>
-                    </div>
-                @else
-                        <img class="img-circle" src="{{$anime->posterImage}}" alt="image_{{$anime->title}}">
-                @endif
+                    <img class="image" src="{{$anime->poster_image}}" alt="image_{{$anime->title}}">
+                    @if(!empty($anime->youtube_video_id))
+                        <div class="overlay">
+                            <a class="popup-youtube icon" href="{{$anime->youtube_video_id}}">
+                                <i class="far fa-play-circle "></i>
+                            </a>
+                        </div>
+                    @endif
                 </div>
-
             </div>
             @endif
             <div class="col">
-                <h1 @if(!empty($anime->title))>{{$anime->title}}</h1>@endif
-                <p @if(!empty($anime->subtype))>Type : {{$anime->subtype}}</p>@endif
-                <p @if(!empty($anime->episodeCount))>Episodes : {{$anime->episodeCount}}</p>@endif
-                <p @if(!empty($anime->episodeLength))>Duration : {{$anime->episodeLength}}</p>@endif
-                <p @if(!empty($anime->startDate) && !empty($anime->endDate))>from {{$anime->startDate}} to {{$anime->endDate}}</p>@endif
-                <p @if(!empty($anime->rating))>Rate : {{$anime->rating}}</p>@endif
+                @if(!empty($anime->title))<h1>{{$anime->title}}</h1>@endif
+                @if(!empty($anime->subtype))<p>Type : {{$anime->subtype}}</p>@endif
+                <p>Episodes : @if(!empty($anime->episode_count)){{$anime->episode_count}}@else ???</p> @endif
+                @if(!empty($anime->episode_length))<p>Duration : {{$anime->episode_length}}</p>@endif
+                @if(!empty($anime->start_date) && !empty($anime->end_date))<p>from {{$anime->start_date}} to {{$anime->end_date}}</p>@endif
+                @if(!empty($anime->rating))<p >Rate : {{$anime->rating}}</p>@endif
+                @if (! empty($anime->genres) && count($anime->genres) > 0)
+                    <div class="list-inline">
+                        @foreach($anime->genres as $genre)
+                            <a class="text-black-50" href="{{route('genres.index', $genre->name)}}"><span class="badge badge-info p-2">{{$genre->name}}</span></a>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="font-italic">No genre(s) recorded yet !</p>
+                @endif
+
+                @if(!empty($anime->synopsis))
+                    <div class="justify-content-center mt-3">
+                        <p class="text-justify">{{$anime->synopsis}}</p>
+                    </div>
+                @endif
             </div>
         </div>
-        <div @if(!empty($anime->synopsis)) class="row justify-content-center mt-5">
-            <p class="text-justify">{{$anime->synopsis}}</p>
-        </div>
+
+        @if(!empty($recommendations) && count($recommendations) > 0)
+            <div class="row justify-content-center mt-5">
+                <h2>You may also like ...</h2>
+            </div>
+            <div class="container">
+                <div class="row mx-auto my-auto">
+                    <div id="recipeCarousel" class="carousel slide w-100" data-ride="carousel">
+                        <div class="carousel-inner w-100" role="listbox">
+                            @foreach($recommendations as $r)
+                                <div class="carousel-item @if($loop->first) active @endif">
+                                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 container_foto  active ">
+                                        <a href="{{route('animes.show', $r->title)}}" target="_blank" rel="noreferrer noopenner">
+                                            <div class="ver_mas text-center">
+                                                <span  class="lnr lnr-eye"><i class="far fa-eye"></i></span>
+                                            </div>
+                                            <article class="text-left">
+                                                <h2>{{$r->title}}</h2>
+                                            </article>
+                                            <img src="{{$r->image_url}}" alt="image_{{$r->title}}">
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <a class="carousel-control-prev w-auto" href="#recipeCarousel" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next w-auto" href="#recipeCarousel" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         @endif
     @endif
 </div>
@@ -44,7 +89,7 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function($) {
-            if ("{{$anime->youtubeVideoId}}" !== "") {
+            if ("{{$anime->youtube_video_id}}" !== "") {
                 $('.popup-youtube').magnificPopup({
                     type: 'iframe',
                     iframe: {
@@ -57,12 +102,35 @@
                             youtube: {
                                 index: 'youtube.com',
                                 id: 'v=',
-                                src: "{{$anime->youtubeVideoId}}"
+                                src: "{{$anime->youtube_video_id}}"
                             }
                         }
                     }
                 });
             }
+
+            // Todo move in a file carousel.js
+            $('#recipeCarousel').carousel({
+                interval: 10000
+            })
+
+            $('.carousel .carousel-item').each(function(){
+                const minPerSlide = 3;
+                let next = $(this).next();
+                if (!next.length) {
+                    next = $(this).siblings(':first');
+                }
+                next.children(':first-child').clone().appendTo($(this));
+
+                for (let i=0; i<minPerSlide; i++) {
+                    next=next.next();
+                    if (!next.length) {
+                        next = $(this).siblings(':first');
+                    }
+
+                    next.children(':first-child').clone().appendTo($(this));
+                }
+            });
 
         });
     </script>
@@ -108,5 +176,42 @@
         .icon:hover {
             color: red;
         }
+
+
+        @media (max-width: 768px) {
+            .carousel-inner .carousel-item > div {
+                display: none;
+            }
+            .carousel-inner .carousel-item > div:first-child {
+                display: block;
+            }
+        }
+
+        .carousel-inner .carousel-item.active,
+        .carousel-inner .carousel-item-next,
+        .carousel-inner .carousel-item-prev {
+            display: flex;
+        }
+
+        /* display 3 */
+        @media (min-width: 768px) {
+
+            .carousel-inner .carousel-item-right.active,
+            .carousel-inner .carousel-item-next {
+                transform: translateX(33.333%);
+            }
+
+            .carousel-inner .carousel-item-left.active,
+            .carousel-inner .carousel-item-prev {
+                transform: translateX(-33.333%);
+            }
+        }
+
+        .carousel-inner .carousel-item-right,
+        .carousel-inner .carousel-item-left{
+            transform: translateX(0);
+        }
+
+
     </style>
 @endsection

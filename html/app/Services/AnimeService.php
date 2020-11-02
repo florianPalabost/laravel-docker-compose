@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Anime;
+use App\Genre;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
 
@@ -34,7 +35,13 @@ class AnimeService
         if (empty($title)) {
             return null;
         }
-        return DB::table('animes')->where('title', $title)->first();
+        return Anime::where('title', $title)->firstOrFail();
+    }
+
+    public function retrieveAnimesWithGenre($genre)
+    {
+        // todo check we have at least 30 animes !
+        return Genre::where('name', $genre->name)->firstOrFail()->animes()->paginate(30);
     }
 
 }
