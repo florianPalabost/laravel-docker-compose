@@ -34,8 +34,6 @@ RUN apk --no-cache add shadow sudo && usermod -u 1000 www-data
 # RUN useradd -g sudo www-data
 RUN echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Add UID '1000' to www-data
-
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www/html
 

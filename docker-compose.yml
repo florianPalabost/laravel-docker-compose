@@ -29,6 +29,17 @@ services:
     networks:
       - default
 
+  laravel-redis:
+    image: redislabs/redisearch:latest
+    restart: always
+    ports: 
+      - 6378:6379
+    links: 
+      - db
+      - web
+    networks:
+      - default
+
   db:
     image: postgres:12
     env_file: .docker/db/.env
@@ -40,7 +51,7 @@ services:
       - default
   
   pgadmin:
-    image: dpage/pgadmin4:4.18
+    image: dpage/pgadmin4:4.27
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@toto.com
