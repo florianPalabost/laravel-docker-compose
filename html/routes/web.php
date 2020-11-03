@@ -21,6 +21,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('/users/profile', 'UsersController@profile')->name('profile');
 
 Route::resource('animes',AnimesController::class );
 Route::get('/animes/import/all', 'AnimesController@import')->name('import-animes');
