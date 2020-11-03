@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Anime;
-use App\Jobs\ImportAnime;
 use App\Services\AnimeService;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
+
 
 class AnimesController extends Controller
 {
@@ -35,7 +34,7 @@ class AnimesController extends Controller
     /**
      * Display a listing of animes.
      *
-     * @return \Illuminate\Http\Response
+     * @return View|Response
      */
     public function index()
     {
@@ -52,7 +51,7 @@ class AnimesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function create()
     {
@@ -75,13 +74,13 @@ class AnimesController extends Controller
      * Display the specified resource.
      *
      * @param $title
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      * @throws \Exception
      */
     public function show($title)
     {
         $anime = $this->animeService->retrieveAnime($title);
-        if (isset($anime)) {
+        if (isset($anime->anime_id)) {
             $client = new Client();
             $uri = env('API_LINK') . $anime->anime_id . '/recommendations';
             $promise = $client->getAsync($uri);
@@ -102,11 +101,11 @@ class AnimesController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function edit($id)
     {
-        //
+        return view('animes.edit');
     }
 
     /**

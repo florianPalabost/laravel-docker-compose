@@ -40,28 +40,31 @@ class ImportAnime implements ShouldQueue
      */
     public function handle()
     {
-        $testAnime = DB::table('animes')->where('anime_id', $this->anime->anime_id)->first();
-        if ($testAnime !== null) {
-            if(isset($testAnime->title)) {
-                Log::debug($testAnime->title . ' with id :  ' . $testAnime->anime_id . ' already imported !');
-                return;
+        if (isset($this->anime->anime_id)) {
+            $testAnime = DB::table('animes')->where('anime_id', $this->anime->anime_id)->first();
+            if ($testAnime !== null && isset($testAnime->anime_id)) {
+                if(isset($testAnime->title)) {
+                    Log::debug($testAnime->title . ' with id :  ' . $testAnime->anime_id . ' already imported !');
+                    return;
+                }
             }
+
+            $client = new Client();
+            $uri = env('API_LINK') . $this->anime->anime_id;
+            // we need to wait 4s because of the api doc
+            sleep(4);
+            Log::debug('call ::::' . $uri);
+            $promise = $client->getAsync($uri);
+            $response = $promise->wait();
+
+            $content = $response->getBody(true)->getContents();
+            $content = json_decode($content);
+
+            // transform result to rpz Anime model
+            // save in db
+            $this->updateAttributes($this->anime, $content);
         }
 
-        $client = new Client();
-        $uri = env('API_LINK') . $this->anime->anime_id;
-        // we need to wait 4s because of the api doc
-        sleep(4);
-        Log::debug('call ::::' . $uri);
-        $promise = $client->getAsync($uri);
-        $response = $promise->wait();
-
-        $content = $response->getBody(true)->getContents();
-        $content = json_decode($content);
-
-        // transform result to rpz Anime model
-        // save in db
-        $this->updateAttributes($this->anime, $content);
 
     }
 
@@ -93,7 +96,7 @@ class ImportAnime implements ShouldQueue
         foreach ($genres as $genre) {
             // check if genre already recorded in db
             $genreDb = DB::table('genres')->where('name', $genre->name)->first();
-            if (isset($genreDb->name) && !empty($genreDb->name)) {
+            if (isset($genreDb->id) && !empty($genreDb->id)) {
                 // check if we already have a record with this anime id and this genre_id
                 $genreAnimeId = DB::table('anime_genre')->where('anime_id', $anime->id)
                     ->where('genre_id', $genreDb->id)->get();
@@ -101,9 +104,8 @@ class ImportAnime implements ShouldQueue
                     continue;
                 }
                 else {
-                    $anime->genres()->attach($genreDb->id);
                     // this association of anime id & genre id doent exist, we create it
-//                    $this->saveAnimeGenre($anime->id, $genreDb->id);
+                    $anime->genres()->attach($genreDb->id);
                 }
             }
             else {
@@ -118,17 +120,7 @@ class ImportAnime implements ShouldQueue
                 $newGenreDb = DB::table('genres')->where('name', $genre->name)->first();
                 // we add relation anime id genre id
                 $anime->genres()->attach($newGenreDb->id);
-//               $this->saveAnimeGenre($anime->id, $newGenreDb->id);
             }
         }
     }
-
-//    public function saveAnimeGenre($animeId, $genreId) {
-//        $newAnimeGenre = new AnimeGenre([
-//            'anime_id' => $animeId,
-//            'genre_id' => $genreId
-//        ]);
-//        $newAnimeGenre->save();
-//        Log::debug('new anime_genre added with anime id : '. $animeId .' and genre_id : ' . $genreId);
-//    }
 }

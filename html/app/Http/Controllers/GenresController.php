@@ -24,10 +24,8 @@ class GenresController extends Controller
         // check if genre exist in db
         $genre = Genre::where('name', $genreName)->firstOrFail();
 
-        if (isset($genre->name)) {
-            // retrieve animes with this genre (with id)
-            $animes = $this->animeService->retrieveAnimesWithGenre($genre);
-        }
+        $animes = isset($genre->name) ? $this->animeService->retrieveAnimesWithGenre($genre) : null;
+
         // we use the view anime index to not duplicate view (see cases)
         return view('animes.index', compact('animes', 'genreName'));
     }

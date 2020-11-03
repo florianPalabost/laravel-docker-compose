@@ -10,3 +10,7 @@ html/storage/anime_index.index-wal
 html/storage/anime_index.index-shm
 
 html/storage/anime_index.index
+
+html/public/css/carousel.css
+
+html/public/mix-manifest.json

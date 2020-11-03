@@ -60,7 +60,7 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => '192.168.1.12:6379',
+            'connection' => env('REDIS_URL', '192.168.1.12:6379'),
             'queue' => env('laravel-redis-queue', 'default'),
             'retry_after' => 90,
             'block_for' => null,
