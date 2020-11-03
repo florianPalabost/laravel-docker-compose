@@ -1,7 +1,8 @@
 version: "3.7"
 services:
   web:
-    image: nginx:latest
+    build: 
+      context: .docker/web
     ports:
       - 8080:80
     volumes:
@@ -9,6 +10,10 @@ services:
       - .docker/web/nginx.conf:/etc/nginx/conf.d/default.conf
     links:
       - php
+      - jikan-rest
+    networks:
+      - default
+
   php:
     build: 
       context: .docker/php
@@ -20,10 +25,88 @@ services:
       - .docker/php/php.ini:/usr/local/etc/php/conf.d/zzz-php.ini
     links:
       - db
+      - jikan-rest
+    networks:
+      - default
+
+  laravel-redis:
+    image: redislabs/redisearch:latest
+    restart: always
+    ports: 
+      - 6378:6379
+    links: 
+      - db
+      - web
+    networks:
+      - default
+
   db:
     image: postgres:12
     env_file: .docker/db/.env
     ports:
       - 54321:5432
     volumes:
-      - .postgres-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - default
+  
+  pgadmin:
+    image: dpage/pgadmin4:4.27
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@toto.com
+      PGADMIN_DEFAULT_PASSWORD: toto
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "9998:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "db:pgsql-server"    
+    networks:
+      - default
+
+  varnish:
+    container_name: laravel-varnish
+    tty: true
+    depends_on:
+      - web
+    restart: always
+    build:
+      context: .
+      dockerfile: .docker/varnish/Dockerfile
+    ports:
+      - 8888:8888
+    command: 'sh start'
+    volumes:
+      - .docker/varnish/default.vcl:/etc/varnish/default.vcl
+    networks:
+      - default
+
+  jikan-rest:
+    container_name: jikan-rest
+    build:
+      context: .docker/jikan
+      dockerfile: Dockerfile
+    depends_on:
+      - jikan-redis
+    ports:
+      - "9999:80"
+    restart: always
+    networks:
+      - default
+
+  jikan-redis:
+    image: redis:5.0.3
+    restart: always
+    networks:
+      - default
+
+
+volumes:
+  db-data:
+  pgadmin-data:
+
+networks:
+  default:
+    driver: bridge

@@ -22,4 +22,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('animes',AnimesController::class );
+Route::get('/animes/import/all', 'AnimesController@import')->name('import-animes');
+
+Route::get('/genres/{genre}', 'GenresController@index')->name('genres.index');

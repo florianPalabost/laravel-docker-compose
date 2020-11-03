@@ -1,8 +1,6 @@
 # Laravel + Docker + PHP 7.3 (with composer) + PostgreSQL starter pack
 
-This is a starter pack to start developing your next $1 Billion app using [Laravel](https://laravel.com/) in just a few minutes.
-
-This starter pack is also suitable for any other PHP project/framework.
+Use a starter pack to start developing apps using [Laravel](https://laravel.com/) in just a few minutes.
 
 **Starter pack includes:**
 * nginx
@@ -10,6 +8,8 @@ This starter pack is also suitable for any other PHP project/framework.
 * Composer
 * PostgreSQL 12
 * Laravel starter code
+* pgAdmin 4.27
+* redis
 
 # Getting started
 
@@ -17,17 +17,12 @@ This starter pack is also suitable for any other PHP project/framework.
 
 Having `docker` and `docker-compose` installed.
 
-If you are not familiar with `docker` then check out [Set up your Docker environment](https://docs.docker.com/get-started/) article from Docker's official web site.
-
-If you don't have `docker-compose` installed then check out the installation guide from [official web site](https://docs.docker.com/compose/install/).
-
-
 ## Installation
 
 1. Clone the project and bring the containers up:
     ```bash
-    git clone laravel-docker-starter-pack && cd laravel-docker-starter-pack
-    docker-compose up
+    git clone <URL_REP> ./
+    ./start.sh
     ```
 1. install composer packages:
     ```bash
@@ -44,8 +39,6 @@ Username is `docker` and password is `secret`.
 To connect to postgres DB from `php` application use `db` as a host name and default port (`5432`).
 
 To connect from the host machine use `localhost` as the host name and port `54321`.
-
-**PS!** Default Laravel code that comes with the starter pack has everything already configured.
 
 ## Running `artisan` commands (ex. migrations)
 
