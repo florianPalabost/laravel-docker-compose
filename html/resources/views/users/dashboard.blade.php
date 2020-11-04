@@ -1,24 +1,29 @@
 @extends('layouts.app')
 
 @section('title')
-    Profile - X
+    Dashboard
 @endsection
 @section('content')
     <div class="container-fluid">
         <div class="row">
             @if(isset($animes) && (count($animes) > 0))
-                <div class="col-xl-3 col-sm-6 py-2">
-                    <div class="card bg-info text-white h-100">
-                        <div class="card-body bg-info">
-                            <div class="rotate">
-                                <i class="fa fa-user fa-4x"></i>
-                            </div>
+                <div class="col-xl-2 col-sm-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body bg-primary">
                             <h6 class="text-uppercase">Animes</h6>
                             <h1 class="display-4">{{count($animes)}}</h1>
                         </div>
                     </div>
                 </div>
             @endif
+            <div class="col-xl-2 col-sm-6">
+                <div class="card bg-info text-white">
+                    <div class="card-body bg-info">
+                        <h6 class="text-uppercase">Watched</h6>
+                        <h1 class="display-4">{{count($animes)}}</h1>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row mt-5">
