@@ -1,7 +1,11 @@
 @extends('layouts.app')
 @section('title')
-    @if(!empty($anime))
-        {{$anime->title}}
+    @if(!empty($anime) && !empty($anime->title))
+        @if(strlen($anime->title) > 50)
+            {{\Illuminate\Support\Str::limit($anime->title, 50)}}
+        @else
+            {{$anime->title}}
+        @endif
     @endif
 @endsection
 @section('content')

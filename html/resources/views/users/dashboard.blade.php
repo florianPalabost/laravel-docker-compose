@@ -65,7 +65,6 @@
                     },
                 ]
             });
-            const a = 4;
         });
     </script>
 @endsection
