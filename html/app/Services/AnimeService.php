@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Anime;
+use App\AnimeUser;
 use App\Genre;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
@@ -43,8 +44,35 @@ class AnimeService
 
     public function retrieveAnimesWithGenre($genre)
     {
-        // todo check we have at least 30 animes !
-        return Genre::where('name', $genre->name)->firstOrFail()->animes()->paginate(30);
+        if(Anime::all()->count() > 30) {
+            return Genre::where('name', $genre->name)->firstOrFail()->animes()->paginate(30);
+        }
+        else {
+            return Genre::where('name', $genre->name)->firstOrFail()->animes()->get();
+        }
+    }
+
+    public function saveUserAnimeStatus($animeId, $userId, $property)
+    {
+        $animeUser = new AnimeUser;
+        $animeUser->anime_id = $animeId;
+        $animeUser->user_id = $userId;
+        $animeUser->$property = $animeUser->$property ? false: true;
+
+        // todo rules for example if watch->true then want_to_watch->false
+        switch ($property) {
+            case 'like':
+
+                break;
+            case 'watch':
+                break;
+            case 'want_to_watch':
+                break;
+        }
+
+        $animeUser->save();
+        return $animeUser->wasChanged();
+
     }
 
 }

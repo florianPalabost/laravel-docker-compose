@@ -23,7 +23,13 @@
                             </a>
                         </div>
                     @endif
+                    <div class="list-inline text-center">
+                        <i id="like" onclick="saveChangeUserAnime('like')" class="far fa-heart fa-3x"></i>
+                        <i id="watch" onclick="saveChangeUserAnime('watch')" class="fas fa-check fa-3x"></i>
+                        <i id="want_to_watch" onclick="saveChangeUserAnime('want_to_watch')"class="far fa-eye fa-3x"></i>
+                    </div>
                 </div>
+
             </div>
             @endif
             <div class="col">
@@ -48,6 +54,7 @@
                         <p class="text-justify">{{$anime->synopsis}}</p>
                     </div>
                 @endif
+
             </div>
         </div>
 
@@ -113,8 +120,28 @@
                     }
                 });
             }
-
         });
+        function saveChangeUserAnime(property) {
+            console.debug(property);
+            $.ajax({
+                type: 'POST',
+                url: "{{route('ajaxAnimeUser.post')}}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    property,
+                    anime_id: "{{$anime->id}}"
+                },
+                success: (data) => {
+                    console.debug(data);
+                    $(this).addClass('red');
+                    alert('Changed recorded');
+                },
+                error: (err) => {
+                    alert(err.message);
+                }
+            });
+            // ajax request to update change on property
+        }
     </script>
 @endsection
 @section('css')
