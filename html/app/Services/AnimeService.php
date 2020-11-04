@@ -22,9 +22,12 @@ class AnimeService
         $this->logger = $logger;
     }
 
-    public function retrieveAnimes() {
+    public function retrieveAnimes($isPaginated = true) {
         try {
-            return DB::table('animes')->whereNotNull('title')->paginate(30);
+            if ($isPaginated) {
+                return DB::table('animes')->whereNotNull('title')->paginate(30);
+            }
+            return DB::table('animes')->whereNotNull('title')->get();
         }
         catch (\Exception $e){
             $this->logger->debug($e->getMessage());
