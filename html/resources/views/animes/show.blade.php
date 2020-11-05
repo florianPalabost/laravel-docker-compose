@@ -24,9 +24,9 @@
                         </div>
                     @endif
                     <div class="list-inline text-center">
-                        <i id="like" onclick="saveChangeUserAnime('like')" class="far fa-heart fa-3x"></i>
-                        <i id="watch" onclick="saveChangeUserAnime('watch')" class="fas fa-check fa-3x"></i>
-                        <i id="want_to_watch" onclick="saveChangeUserAnime('want_to_watch')"class="far fa-eye fa-3x"></i>
+                        <i title="like" id="like" onclick="saveChangeUserAnime('like')" class="{{!empty($stat_anime) && $stat_anime->like ? 'fas red' :'far blue'}} fa-heart fa-3x link"></i>
+                        <i title="watch" id="watch" onclick="saveChangeUserAnime('watch')" class="{{!empty($stat_anime) && $stat_anime->watch ? 'fas red' :'far blue'}} fa-check-circle fa-3x link"></i>
+                        <i title="want to watch" id="want_to_watch" onclick="saveChangeUserAnime('want_to_watch')" class="{{!empty($stat_anime) && $stat_anime->want_to_watch ? 'fas red' :'far blue'}} fa-eye fa-3x link"></i>
                     </div>
                 </div>
 
@@ -122,7 +122,11 @@
             }
         });
         function saveChangeUserAnime(property) {
-            console.debug(property);
+
+            Notiflix.Notify.Init({
+                position: 'right-bottom'
+            });
+
             $.ajax({
                 type: 'POST',
                 url: "{{route('ajaxAnimeUser.post')}}",
@@ -132,15 +136,26 @@
                     anime_id: "{{$anime->id}}"
                 },
                 success: (data) => {
-                    console.debug(data);
-                    $(this).addClass('red');
-                    alert('Changed recorded');
+                    // remove class fas||far (fas,red -> full(is true), far,blue->empty(is false))
+                    if($('#'+property).hasClass('red')) {
+                        $('#'+property).removeClass('fas');
+                        $('#'+property).removeClass('red');
+                        $('#'+property).addClass('far');
+                        $('#'+property).addClass('blue');
+                    }
+                    else {
+                        $('#'+property).removeClass('far');
+                        $('#'+property).removeClass('blue');
+                        $('#'+property).addClass('fas');
+                        $('#'+property).addClass('red');
+                    }
+                    Notiflix.Notify.Success('Change recorded');
+
                 },
                 error: (err) => {
-                    alert(err.message);
+                    Notiflix.Notify.Failure(err.responseJSON.message);
                 }
             });
-            // ajax request to update change on property
         }
     </script>
 @endsection
@@ -148,6 +163,16 @@
     <link href="{{ asset('css/carousel.css') }}" rel="stylesheet">
 
     <style>
+        .link {
+            cursor: pointer;
+        }
+        .red {
+            color: red;
+        }
+        .blue {
+            color: dodgerblue;
+        }
+
         .img-container {
             position: relative;
             width: 100%;

@@ -37,5 +37,9 @@ class Anime extends Model
         return $this->belongsToMany('App\Genre', 'anime_genre');
     }
 
+    public function users() {
+        return $this->belongsToMany('App\User', 'anime_user')
+            ->withPivot(['like', 'watch', 'want_to_watch'])->as('stat_anime');
+    }
 
 }

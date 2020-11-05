@@ -89,7 +89,11 @@ class AnimesController extends Controller
             $content = json_decode($content);
             $recommendations = $content->recommendations;
 
-            return view('animes.show', compact('anime', 'recommendations'));
+            $user = auth()->user();
+
+            $stat_anime = count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
+
+            return view('animes.show', compact('anime', 'recommendations', 'stat_anime'));
         }
         else {
             throw new \Exception('No anime with title ' . $title);

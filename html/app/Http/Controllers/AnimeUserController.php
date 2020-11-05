@@ -12,6 +12,7 @@ class AnimeUserController extends Controller
 
     public function __construct(AnimeService $animeService)
     {
+        $this->middleware('auth');
         $this->animeService = $animeService;
     }
 
@@ -19,18 +20,18 @@ class AnimeUserController extends Controller
         if ($request->get('property') === '') {
             throw new \Error('no property pass');
         }
-        $a = 11;
+
         // check property if enum : like, watch, want_to_watch
         $property = $request->get('property');
         if ($property === 'like' || $property === 'watch' || $property === 'want_to_watch') {
             $user = auth()->user();
-            if (!empty($request->get('anime_id'))) {
+            if (!empty($request->get('anime_id')) && !empty($user)) {
                 $animeId = $request->get('anime_id');
                 if($this->animeService->saveUserAnimeStatus($animeId, $user->id, $property)) {
-                    return \response()->setStatusCode(201);
+                    return \response()->json(['message'=> 'property updated'],201);
                 }
                 else {
-                    return \response()->setStatusCode(501, 'cant change property');
+                    return \response()->json(['message'=> 'cant change property'], 500);
                 }
             }
             else {
@@ -41,7 +42,5 @@ class AnimeUserController extends Controller
         else {
             throw new \Error($property . ' property is not recorded :');
         }
-        $a = 5;
-        return;
     }
 }

@@ -54,9 +54,10 @@ class AnimeService
 
     public function saveUserAnimeStatus($animeId, $userId, $property)
     {
-        $animeUser = new AnimeUser;
-        $animeUser->anime_id = $animeId;
-        $animeUser->user_id = $userId;
+        $animeUser = AnimeUser::firstOrNew(
+            ['anime_id' => $animeId],
+            ['user_id' => $userId],
+        );
         $animeUser->$property = $animeUser->$property ? false: true;
 
         // todo rules for example if watch->true then want_to_watch->false
@@ -71,7 +72,7 @@ class AnimeService
         }
 
         $animeUser->save();
-        return $animeUser->wasChanged();
+        return $animeUser->wasChanged() || $animeUser->wasRecentlyCreated;
 
     }
 
