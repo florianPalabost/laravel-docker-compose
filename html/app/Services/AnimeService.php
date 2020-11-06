@@ -48,7 +48,7 @@ class AnimeService
 
     public function retrieveAnimesWithGenre($genre)
     {
-        if(Anime::all()->count() > 30) {
+        if(Anime::count() > 30) {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->paginate(30);
         }
         else {

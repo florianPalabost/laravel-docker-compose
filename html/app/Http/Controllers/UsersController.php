@@ -38,11 +38,14 @@ class UsersController extends Controller
             "watch" => 0,
             "want_to_watch" => 0
         ];
-        foreach ($user->animes as $anime) {
-            foreach ($statsAnimes as $prop => $count) {
-                if ($anime->stat_anime->$prop) $statsAnimes->$prop++;
+        if(isset($user->animes) && count($user->animes) > 0) {
+            foreach ($user->animes as $anime) {
+                foreach ($statsAnimes as $prop => $count) {
+                    if ($anime->stat_anime->$prop) $statsAnimes->$prop++;
+                }
             }
         }
+
         return view('users.dashboard', compact('animes', 'statsAnimes'));
     }
 
