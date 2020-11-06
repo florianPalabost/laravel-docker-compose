@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Anime;
 use App\Services\AnimeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class UsersController extends Controller
 {
     private $animeService;
+
     public function __construct(AnimeService $animeService)
     {
         $this->middleware('auth');
@@ -19,7 +18,7 @@ class UsersController extends Controller
 
     public function dashboard(Request $request) {
         if ($request->ajax()) {
-            $data = DB::table('animes')->whereNotNull('title')->latest()->get();
+            $data = $this->animeService->retrieveLatestAnimes();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('title', function($row) {
@@ -33,8 +32,18 @@ class UsersController extends Controller
         }
 
         $animes = $this->animeService->retrieveAnimes(false);
-
-        return view('users.dashboard', compact('animes'));
+        $user = auth()->user();
+        $statsAnimes = (object) [
+            "like" => 0,
+            "watch" => 0,
+            "want_to_watch" => 0
+        ];
+        foreach ($user->animes as $anime) {
+            foreach ($statsAnimes as $prop => $count) {
+                if ($anime->stat_anime->$prop) $statsAnimes->$prop++;
+            }
+        }
+        return view('users.dashboard', compact('animes', 'statsAnimes'));
     }
 
     public function profile() {

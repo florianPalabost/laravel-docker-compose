@@ -6,7 +6,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            @if(isset($animes) && (count($animes) > 0))
+            @isset($animes)
                 <div class="col-xl-2 col-sm-6">
                     <div class="card bg-primary text-white">
                         <div class="card-body bg-primary">
@@ -15,15 +15,33 @@
                         </div>
                     </div>
                 </div>
-            @endif
-            <div class="col-xl-2 col-sm-6">
-                <div class="card bg-info text-white">
-                    <div class="card-body bg-info">
-                        <h6 class="text-uppercase">Watched</h6>
-                        <h1 class="display-4">{{count($animes)}}</h1>
+            @endisset
+            @isset($statsAnimes)
+                <div class="col-xl-2 col-sm-6">
+                    <div class="card bg-info text-white">
+                        <div class="card-body bg-info">
+                            <h6 class="text-uppercase">Liked</h6>
+                            <h1 class="display-4">{{$statsAnimes->like}}</h1>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-xl-2 col-sm-6">
+                    <div class="card bg-info text-white">
+                        <div class="card-body bg-info">
+                            <h6 class="text-uppercase">Watched</h6>
+                            <h1 class="display-4">{{$statsAnimes->watch}}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-sm-6">
+                    <div class="card bg-info text-white">
+                        <div class="card-body bg-info">
+                            <h6 class="text-uppercase">Wanted to Watch</h6>
+                            <h1 class="display-4">{{$statsAnimes->want_to_watch}}</h1>
+                        </div>
+                    </div>
+                </div>
+            @endisset
         </div>
 
         <div class="row mt-5">

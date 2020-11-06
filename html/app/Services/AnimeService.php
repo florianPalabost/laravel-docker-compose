@@ -42,6 +42,10 @@ class AnimeService
         return Anime::where('title', $title)->firstOrFail();
     }
 
+    public function retrieveLatestAnimes() {
+        return DB::table('animes')->whereNotNull('title')->latest()->get();
+    }
+
     public function retrieveAnimesWithGenre($genre)
     {
         if(Anime::all()->count() > 30) {
