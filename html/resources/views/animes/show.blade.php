@@ -9,6 +9,7 @@
     @endif
 @endsection
 @section('content')
+    {{ Breadcrumbs::render('anime', $anime) }}
 <div class="container">
     @if(!empty($anime))
         <div class="row justify-content-center mt-5">

@@ -6,6 +6,7 @@
 @section('content')
     <div class="container-fluid contenedor text-center">
         <h1 class="text-center">Animes @if(isset($genreName)) - {{$genreName}} @endif</h1>
+        {{ Breadcrumbs::render('animes') }}
         @auth
             <div>
                 <a class="btn btn-primary" href="{{route('animes.create')}}">Add Anime</a>
