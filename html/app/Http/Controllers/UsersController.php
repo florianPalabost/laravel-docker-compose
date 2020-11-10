@@ -9,11 +9,13 @@ use Yajra\DataTables\Facades\DataTables;
 class UsersController extends Controller
 {
     private $animeService;
+    protected $user;
 
     public function __construct(AnimeService $animeService)
     {
         $this->middleware('auth');
         $this->animeService = $animeService;
+        $this->user = auth()->user();
     }
 
     public function dashboard(Request $request) {
@@ -32,14 +34,14 @@ class UsersController extends Controller
         }
 
         $animes = $this->animeService->retrieveAnimes(false);
-        $user = auth()->user();
+
         $statsAnimes = (object) [
             "like" => 0,
             "watch" => 0,
             "want_to_watch" => 0
         ];
-        if(isset($user->animes) && count($user->animes) > 0) {
-            foreach ($user->animes as $anime) {
+        if(isset($this->user->animes) && count($this->user->animes) > 0) {
+            foreach ($this->user->animes as $anime) {
                 foreach ($statsAnimes as $prop => $count) {
                     if ($anime->stat_anime->$prop) $statsAnimes->$prop++;
                 }
