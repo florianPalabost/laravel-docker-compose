@@ -26,9 +26,9 @@ class AnimeService
     public function retrieveAnimes($isPaginated = true) {
         try {
             if ($isPaginated) {
-                return DB::table('animes')->whereNotNull('title')->paginate(30);
+                return DB::table('animes')->whereNotNull('title')->orderBy('title')->paginate(30);
             }
-            return DB::table('animes')->whereNotNull('title')->get();
+            return DB::table('animes')->whereNotNull('title')->orderBy('title')->get();
         }
         catch (\Exception $e){
             $this->logger->debug($e->getMessage());
@@ -49,10 +49,10 @@ class AnimeService
     public function retrieveAnimesWithGenre($genre)
     {
         if(Anime::count() > 30) {
-            return Genre::where('name', $genre->name)->firstOrFail()->animes()->paginate(30);
+            return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->paginate(30);
         }
         else {
-            return Genre::where('name', $genre->name)->firstOrFail()->animes()->get();
+            return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->get();
         }
     }
 
