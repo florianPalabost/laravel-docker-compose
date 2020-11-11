@@ -48,6 +48,9 @@ class AnimeService
 
     public function retrieveAnimesWithGenre($genre)
     {
+        if (empty($genre)) {
+            throw new \Error('no genre pass to function');
+        }
         if(Anime::count() > 30) {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->paginate(30);
         }
@@ -56,6 +59,12 @@ class AnimeService
         }
     }
 
+    /**
+     * @param $animeId
+     * @param $userId
+     * @param $property string can be 'like' || 'watch' || 'want_to_watch'
+     * @return bool
+     */
     public function saveUserAnimeStatus($animeId, $userId, $property)
     {
         $animeUser = AnimeUser::firstOrNew(

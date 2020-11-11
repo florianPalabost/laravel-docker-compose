@@ -18,8 +18,12 @@
     @yield('css')
 </head>
 <body>
-    <div id="app">
-        @include('layouts.navbars.nav')
+    <div id="app" class="d-flex wrapper">
+
+    @if(Route::currentRouteName() === 'dashboard')
+            @include('layouts.navbars.sidebar')
+        @endif
+
 
         <div class="card-body">
             @if (session('status'))
@@ -28,9 +32,15 @@
                 </div>
             @endif
         </div>
+        <div id="page-content-wrapper">
+            @include('layouts.navbars.nav')
+            <div class="container-fluid">
+            @yield('content')
 
-        @yield('content')
-        @include('layouts.footers.footer')
+            </div>
+
+            @include('layouts.footers.footer')
+        </div>
     </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
