@@ -36,4 +36,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function animes() {
+        return $this->belongsToMany('App\Anime', 'anime_user')
+            ->withPivot(['like', 'watch', 'want_to_watch'])->as('stat_anime');
+    }
 }

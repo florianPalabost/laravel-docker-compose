@@ -1,10 +1,15 @@
 @extends('layouts.app')
 @section('title')
-    @if(!empty($anime))
-        {{$anime->title}}
+    @if(!empty($anime) && !empty($anime->title))
+        @if(strlen($anime->title) > 50)
+            {{\Illuminate\Support\Str::limit($anime->title, 50)}}
+        @else
+            {{$anime->title}}
+        @endif
     @endif
 @endsection
 @section('content')
+    {{ Breadcrumbs::render('anime', $anime) }}
 <div class="container">
     @if(!empty($anime))
         <div class="row justify-content-center mt-5">
@@ -19,7 +24,13 @@
                             </a>
                         </div>
                     @endif
+                    <div class="list-inline text-center">
+                        <i title="like" id="like" onclick="saveChangeUserAnime('like')" class="{{!empty($stat_anime) && $stat_anime->like ? 'fas red' :'far blue'}} fa-heart fa-3x link"></i>
+                        <i title="watch" id="watch" onclick="saveChangeUserAnime('watch')" class="{{!empty($stat_anime) && $stat_anime->watch ? 'fas red' :'far blue'}} fa-check-circle fa-3x link"></i>
+                        <i title="want to watch" id="want_to_watch" onclick="saveChangeUserAnime('want_to_watch')" class="{{!empty($stat_anime) && $stat_anime->want_to_watch ? 'fas red' :'far blue'}} fa-eye fa-3x link"></i>
+                    </div>
                 </div>
+
             </div>
             @endif
             <div class="col">
@@ -44,6 +55,7 @@
                         <p class="text-justify">{{$anime->synopsis}}</p>
                     </div>
                 @endif
+
             </div>
         </div>
 
@@ -109,14 +121,66 @@
                     }
                 });
             }
-
         });
+        async function saveChangeUserAnime(property) {
+
+            Notiflix.Notify.Init({
+                position: 'right-bottom'
+            });
+
+            try {
+                const headerToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const postData =  JSON.stringify({
+                    _token: "{{ csrf_token() }}",
+                    property,
+                    anime_id: "{{$anime->id}}"
+                });
+
+                let res = await fetch("{{route('ajaxAnimeUser.post')}}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': headerToken
+                    },
+                    body:postData
+                });
+                if (res.ok) {
+                    res = await res.json();
+                    const statusIdDom = document.querySelector('#' + property);
+                    if(statusIdDom.classList.contains('red')) {
+                        statusIdDom.classList.toggle('far');
+                        statusIdDom.classList.replace('red', 'blue');
+                    }
+                    else {
+                        statusIdDom.classList.toggle('fas');
+                        statusIdDom.classList.replace('blue', 'red');
+                    }
+                    Notiflix.Notify.Success('Change recorded');
+                }
+            }
+            catch (e) {
+                console.err(e)
+                Notiflix.Notify.Failure(e);
+                throw new Error('Problem occured with server');
+            }
+
+        }
     </script>
 @endsection
 @section('css')
     <link href="{{ asset('css/carousel.css') }}" rel="stylesheet">
 
     <style>
+        .link {
+            cursor: pointer;
+        }
+        .red {
+            color: red;
+        }
+        .blue {
+            color: dodgerblue;
+        }
+
         .img-container {
             position: relative;
             width: 100%;

@@ -7,6 +7,7 @@
 require('./bootstrap');
 require('magnific-popup');
 require('@fortawesome/fontawesome-free/js/all.min');
+require('notiflix');
 window.Vue = require('vue');
 
 /**

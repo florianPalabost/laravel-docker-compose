@@ -9,7 +9,7 @@ window._ = require('lodash');
 try {
     window.Popper = require('popper.js').default;
     window.$ = window.jQuery = require('jquery');
-
+    window.Notiflix = require('notiflix');
     require('bootstrap');
 } catch (e) {}
 
