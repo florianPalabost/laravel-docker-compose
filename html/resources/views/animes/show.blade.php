@@ -122,41 +122,48 @@
                 });
             }
         });
-        function saveChangeUserAnime(property) {
+        async function saveChangeUserAnime(property) {
 
             Notiflix.Notify.Init({
                 position: 'right-bottom'
             });
 
-            $.ajax({
-                type: 'POST',
-                url: "{{route('ajaxAnimeUser.post')}}",
-                data: {
+            try {
+                const headerToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const postData =  JSON.stringify({
                     _token: "{{ csrf_token() }}",
                     property,
                     anime_id: "{{$anime->id}}"
-                },
-                success: (data) => {
-                    // remove class fas||far (fas,red -> full(is true), far,blue->empty(is false))
-                    if($('#'+property).hasClass('red')) {
-                        $('#'+property).removeClass('fas');
-                        $('#'+property).removeClass('red');
-                        $('#'+property).addClass('far');
-                        $('#'+property).addClass('blue');
+                });
+
+                let res = await fetch("{{route('ajaxAnimeUser.post')}}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': headerToken
+                    },
+                    body:postData
+                });
+                if (res.ok) {
+                    res = await res.json();
+                    const statusIdDom = document.querySelector('#' + property);
+                    if(statusIdDom.classList.contains('red')) {
+                        statusIdDom.classList.toggle('far');
+                        statusIdDom.classList.replace('red', 'blue');
                     }
                     else {
-                        $('#'+property).removeClass('far');
-                        $('#'+property).removeClass('blue');
-                        $('#'+property).addClass('fas');
-                        $('#'+property).addClass('red');
+                        statusIdDom.classList.toggle('fas');
+                        statusIdDom.classList.replace('blue', 'red');
                     }
                     Notiflix.Notify.Success('Change recorded');
-
-                },
-                error: (err) => {
-                    Notiflix.Notify.Failure(err.responseJSON.message);
                 }
-            });
+            }
+            catch (e) {
+                console.err(e)
+                Notiflix.Notify.Failure(e);
+                throw new Error('Problem occured with server');
+            }
+
         }
     </script>
 @endsection

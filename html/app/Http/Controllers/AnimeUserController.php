@@ -17,16 +17,16 @@ class AnimeUserController extends Controller
     }
 
     public function recordUserAnimeStatus(Request $request) {
-        if ($request->get('property') === '') {
+        if ($request->json('property') === '') {
             throw new \Error('no property pass');
         }
 
         // check property if enum : like, watch, want_to_watch
-        $property = $request->get('property');
+        $property = $request->json('property');
         if ($property === 'like' || $property === 'watch' || $property === 'want_to_watch') {
             $user = auth()->user();
-            if (!empty($request->get('anime_id')) && !empty($user)) {
-                $animeId = $request->get('anime_id');
+            if (!empty($request->json('anime_id')) && !empty($user)) {
+                $animeId = $request->json('anime_id');
                 if($this->animeService->saveUserAnimeStatus($animeId, $user->id, $property)) {
                     return \response()->json(['message'=> 'property updated'],201);
                 }
