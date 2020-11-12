@@ -17,30 +17,17 @@
                 </div>
             @endisset
             @isset($statsAnimes)
-                <div class="col-xl-2 col-sm-6">
-                    <div class="card bg-info text-white">
-                        <div class="card-body bg-info">
-                            <h6 class="text-uppercase">Liked</h6>
-                            <h1 class="display-4">{{$statsAnimes->like}}</h1>
+                @foreach($statsAnimes as $prop => $nbProp)
+                    <div class="col-xl-2 col-sm-6">
+                        <div class="card bg-info text-white">
+                            <div class="card-body bg-info">
+                                <h6 class="text-uppercase">{{str_replace('_', ' ', $prop)}}</h6>
+                                <h1 class="display-4">{{$nbProp}}</h1>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-2 col-sm-6">
-                    <div class="card bg-info text-white">
-                        <div class="card-body bg-info">
-                            <h6 class="text-uppercase">Watched</h6>
-                            <h1 class="display-4">{{$statsAnimes->watch}}</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-sm-6">
-                    <div class="card bg-info text-white">
-                        <div class="card-body bg-info">
-                            <h6 class="text-uppercase">Wanted to Watch</h6>
-                            <h1 class="display-4">{{$statsAnimes->want_to_watch}}</h1>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
+
             @endisset
         </div>
 
