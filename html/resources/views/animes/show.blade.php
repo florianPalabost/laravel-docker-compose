@@ -165,7 +165,7 @@
                 case 'like':
                     // like : red -> blue
                     if (statusIdDom.classList.contains('red')) {
-                        toggleRemoveReplaceClassItem(statusIdDom, 'far', 'fas', ['red', 'blue']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
                     }
                     // blue -> red
                     else {
@@ -173,48 +173,49 @@
                         const watchIdDom = document.querySelector('#watch');
                         const wantToWatchIdDom = document.querySelector('#want_to_watch');
                         // like item
-                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', 'far', ['blue', 'red']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
 
                         // watch item
                         if (watchIdDom.classList.contains('blue')) {
-                            toggleRemoveReplaceClassItem(watchIdDom, 'fas', 'far', ['blue', 'red']);
+                            toggleRemoveReplaceClassItem(watchIdDom, 'fas', ['blue', 'red']);
                         }
 
                         // want_to_watch item
                         if (wantToWatchIdDom.classList.contains('red')) {
-                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', 'fas', ['red', 'blue']);
+                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', ['red', 'blue']);
                         }
                     }
                     break;
                 case 'watch':
                     // watch:red->blue
                     if (statusIdDom.classList.contains('red')) {
-                        toggleRemoveReplaceClassItem(statusIdDom, 'far', 'fas', ['red', 'blue']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
                     }
                     // watch:blue->red & want_to_watch:red,blue->blue
                     else {
                         const wantToWatchIdDom = document.querySelector('#want_to_watch');
-                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', 'far', ['blue', 'red']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
                         if (wantToWatchIdDom.classList.contains('red')) {
-                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', 'fas', ['red', 'blue']);
+                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', ['red', 'blue']);
                         }
                     }
                     break;
                 default:
                     // want_to_watch: red->blue
                     if (statusIdDom.classList.contains('red')) {
-                        toggleRemoveReplaceClassItem(statusIdDom, 'far', 'fas', ['red', 'blue']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
                     }
                     // want_to_watch: blue-> red
                     else {
-                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', 'far', ['blue', 'red']);
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
                     }
                     break;
             }
 
         }
 
-        function toggleRemoveReplaceClassItem(item, toggleClass, removeClass, replaceClasses = []) {
+        function toggleRemoveReplaceClassItem(item, toggleClass, replaceClasses = []) {
+            const removeClass = toggleClass === 'far' ? 'fas': 'far';
             if (toggleClass === '' || removeClass === '' || replaceClasses.length !== 2) throw new Error('wrong parameters pass to fct');
             item?.classList.toggle(toggleClass);
             item?.classList.remove(removeClass);
