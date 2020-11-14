@@ -214,6 +214,11 @@
 
         }
 
+        /**
+         * @param {Element} item dom which is apply the class changes
+         * @param {string} toggleClass fas || far
+         * @param {string[]} replaceClasses 0: class to delete, 1 class to add
+         */
         function toggleRemoveReplaceClassItem(item, toggleClass, replaceClasses = []) {
             const removeClass = toggleClass === 'far' ? 'fas': 'far';
             if (toggleClass === '' || removeClass === '' || replaceClasses.length !== 2) throw new Error('wrong parameters pass to fct');
