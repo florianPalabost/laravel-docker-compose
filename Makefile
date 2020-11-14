@@ -3,7 +3,8 @@ PHP_EXEC := $(DOCKER_COMPOSE) exec -w /var/www/html php
 WEB_EXEC := $(DOCKER_COMPOSE) exec -w /var/www/html web
 NPM_EXEC := $(DOCKER_COMPOSE) exec -w /var/www/html npm
 
-## Global commands
+## Global commands todo color logs & echo & errors
+
 install:
 	./start.sh
 	$(PHP_EXEC) composer install
@@ -26,6 +27,11 @@ npm-watch: ## compile scss & js files
 
 logs:
 	$(DOCKER_COMPOSE) logs -f
+
+cache-clear:
+	@$(PHP_EXEC) php artisan config:clear
+	@$(PHP_EXEC) php artisan cache:clear
+	@$(PHP_EXEC) php artisan view:clear
 
 clean:
 	$(MAKE) down
