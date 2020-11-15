@@ -18,3 +18,5 @@ html/public/mix-manifest.json
 html/public/js/
 
 .idea/
+
+html/tests/reports/

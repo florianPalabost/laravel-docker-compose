@@ -45,6 +45,8 @@ analyze: ## larastan, eslint ?
 phpunit:
 	@$(PHP_EXEC) vendor/bin/phpunit
 
+code-coverage:
+	@$(PHP_EXEC) vendor/bin/phpunit --coverage-html tests/reports/
 route:
 	@$(PHP_EXEC) php artisan route:list
 
