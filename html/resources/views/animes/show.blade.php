@@ -36,7 +36,7 @@
             <div class="col">
                 @if(!empty($anime->title))<h1>{{$anime->title}}</h1>@endif
                 @if(!empty($anime->subtype))<p>Type : {{$anime->subtype}}</p>@endif
-                <p>Episodes : @if(!empty($anime->episode_count)){{$anime->episode_count}}@else ???</p> @endif
+                <p>Episodes : @if(!empty($anime->episode_count)){{$anime->episode_count}}@else NaN</p> @endif
                 @if(!empty($anime->episode_length))<p>Duration : {{$anime->episode_length}}</p>@endif
                 @if(!empty($anime->start_date) && !empty($anime->end_date))<p>from {{$anime->start_date}} to {{$anime->end_date}}</p>@endif
                 @if(!empty($anime->rating))<p >Rate : {{$anime->rating}}</p>@endif
@@ -130,6 +130,10 @@
 
             try {
                 const headerToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': headerToken
+                };
                 const postData =  JSON.stringify({
                     _token: "{{ csrf_token() }}",
                     property,
@@ -138,33 +142,104 @@
 
                 let res = await fetch("{{route('ajaxAnimeUser.post')}}", {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': headerToken
-                    },
+                    headers,
                     body:postData
                 });
                 if (res.ok) {
                     res = await res.json();
-                    const statusIdDom = document.querySelector('#' + property);
-                    if(statusIdDom.classList.contains('red')) {
-                        statusIdDom.classList.toggle('far');
-                        statusIdDom.classList.replace('red', 'blue');
-                    }
-                    else {
-                        statusIdDom.classList.toggle('fas');
-                        statusIdDom.classList.replace('blue', 'red');
-                    }
+                    changePropertyItemColorToColor(property, res?.data);
                     Notiflix.Notify.Success('Change recorded');
                 }
             }
             catch (e) {
-                console.err(e)
-                Notiflix.Notify.Failure(e);
+                Notiflix.Notify.Failure(e.message);
                 throw new Error('Problem occured with server');
             }
 
         }
+        function changePropertyItemColorToColor(property, data = null) {
+            if (data === null) throw new Error('Error no data provided to change properties values');
+
+            const statusIdDom = document.querySelector('#' + property);
+            // todo check this Iddom exist
+
+            switch (property) {
+                case 'like':
+                    // like : red -> blue
+                    if (statusIdDom.classList.contains('red')) {
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
+                    }
+                    // blue -> red
+                    else {
+                        // like:blue->red, watch:blue,red->red, want_to_watch: blue,red -> blue
+                        const watchIdDom = document.querySelector('#watch');
+                        const wantToWatchIdDom = document.querySelector('#want_to_watch');
+                        // like item
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
+
+                        // watch item
+                        if (watchIdDom.classList.contains('blue')) {
+                            toggleRemoveReplaceClassItem(watchIdDom, 'fas', ['blue', 'red']);
+                        }
+
+                        // want_to_watch item
+                        if (wantToWatchIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', ['red', 'blue']);
+                        }
+                    }
+                    break;
+                case 'watch':
+                    // watch:red->blue
+                    if (statusIdDom.classList.contains('red')) {
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
+                    }
+                    // watch:blue->red & want_to_watch:red,blue->blue
+                    else {
+                        const wantToWatchIdDom = document.querySelector('#want_to_watch');
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
+                        if (wantToWatchIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(wantToWatchIdDom, 'far', ['red', 'blue']);
+                        }
+                    }
+                    break;
+                default:
+                    // want_to_watch: red->blue
+                    if (statusIdDom.classList.contains('red')) {
+                        toggleRemoveReplaceClassItem(statusIdDom, 'far', ['red', 'blue']);
+                    }
+                    // want_to_watch: blue-> red
+                    else {
+                        toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
+
+                        // like: red, blue->blue && watch: red,blue->blue
+                        const likeIdDom = document.querySelector('#like');
+                        const watchIdDom = document.querySelector('#watch');
+                        if (likeIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(likeIdDom, 'far', ['red', 'blue']);
+                        }
+                        if (watchIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(watchIdDom, 'far', ['red', 'blue']);
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        /**
+         * @param {Element} item dom which is apply the class changes
+         * @param {string} toggleClass fas || far
+         * @param {string[]} replaceClasses 0: class to delete, 1 class to add
+         */
+        function toggleRemoveReplaceClassItem(item, toggleClass, replaceClasses = []) {
+            const removeClass = toggleClass === 'far' ? 'fas': 'far';
+            if (toggleClass === '' || removeClass === '' || replaceClasses.length !== 2) throw new Error('wrong parameters pass to fct');
+            item?.classList.toggle(toggleClass);
+            item?.classList.remove(removeClass);
+            item?.classList.replace(replaceClasses[0], replaceClasses[1]);
+
+        }
+
     </script>
 @endsection
 @section('css')

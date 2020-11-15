@@ -73,19 +73,29 @@ class AnimeService
         );
         $animeUser->$property = $animeUser->$property ? false: true;
 
-        // todo rules for example if watch->true then want_to_watch->false
         switch ($property) {
             case 'like':
-
+                // on passe like a true
+                if ($animeUser->like) {
+                    $animeUser->watch = true;
+                    $animeUser->want_to_watch = false;
+                }
                 break;
             case 'watch':
+                if ($animeUser->watch) {
+                    $animeUser->want_to_watch = false;
+                }
                 break;
             case 'want_to_watch':
+                if ($animeUser->want_to_watch) {
+                    $animeUser->watch = false;
+                    $animeUser->like = false;
+                }
                 break;
         }
 
         $animeUser->save();
-        return $animeUser->wasChanged() || $animeUser->wasRecentlyCreated;
+        return $animeUser;
 
     }
 
