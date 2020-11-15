@@ -161,6 +161,8 @@
             if (data === null) throw new Error('Error no data provided to change properties values');
 
             const statusIdDom = document.querySelector('#' + property);
+            // todo check this Iddom exist
+
             switch (property) {
                 case 'like':
                     // like : red -> blue
@@ -208,6 +210,16 @@
                     // want_to_watch: blue-> red
                     else {
                         toggleRemoveReplaceClassItem(statusIdDom, 'fas', ['blue', 'red']);
+
+                        // like: red, blue->blue && watch: red,blue->blue
+                        const likeIdDom = document.querySelector('#like');
+                        const watchIdDom = document.querySelector('#watch');
+                        if (likeIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(likeIdDom, 'far', ['red', 'blue']);
+                        }
+                        if (watchIdDom.classList.contains('red')) {
+                            toggleRemoveReplaceClassItem(watchIdDom, 'far', ['red', 'blue']);
+                        }
                     }
                     break;
             }
