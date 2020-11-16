@@ -20,3 +20,5 @@ html/public/js/
 .idea/
 
 html/tests/reports/
+
+html/phpunit.xml.bak

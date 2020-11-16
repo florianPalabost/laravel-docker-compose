@@ -49,7 +49,17 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - default
-  
+
+  dbtest:
+    image: postgres:12
+    env_file: .docker/db/.env.testing
+    ports:
+      - 54322:5432
+    volumes:
+      - db-data-testing:/var/lib/postgresql/data
+    networks:
+      - default
+
   pgadmin:
     image: dpage/pgadmin4:4.27
     restart: always
@@ -63,6 +73,7 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     links:
       - "db:pgsql-server"    
+      - "dbtest:test-pgsql-server"
     networks:
       - default
 
@@ -105,6 +116,7 @@ services:
 
 volumes:
   db-data:
+  db-data-testing:
   pgadmin-data:
 
 networks:

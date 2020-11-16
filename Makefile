@@ -40,13 +40,14 @@ clean:
 ## Project commands
 analyze: ## larastan, eslint ?
 	@$(PHP_EXEC) vendor/bin/phpstan analyze --memory-limit 1G
-	@$(WEB_EXEC)
 
 phpunit:
+	@$(PHP_EXEC) php artisan migrate:refresh --env=testing
 	@$(PHP_EXEC) vendor/bin/phpunit
 
 code-coverage:
 	@$(PHP_EXEC) vendor/bin/phpunit --coverage-html tests/reports/
+
 route:
 	@$(PHP_EXEC) php artisan route:list
 
