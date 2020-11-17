@@ -69,7 +69,7 @@ analyze:
 
 ## phpcbf: 	rep, php code beautifer & fixer
 phpcbf:
-	@$(PHP_EXEC) vendor/bin/phpcbf $(COMMAND_ARGS)
+	@$(PHP_EXEC) vendor/bin/phpcbf $(COMMAND_ARGS) -d " memory_limit=256M"
 
 ## phpunit: 	Run tests (refresh db before)
 phpunit:
