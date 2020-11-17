@@ -12,7 +12,8 @@ class ImportAnimeTest extends TestCase
 {
     const ANIME_ID = 1;
 
-    public function testEnvLinkIsSetAndWork() {
+    public function testEnvLinkIsSetAndWork()
+    {
         // Given
         $this->assertNotNull(env('API_LINK'));
         $uri = env('API_LINK') . self::ANIME_ID;
@@ -24,7 +25,5 @@ class ImportAnimeTest extends TestCase
 
         // Then
         $this->assertEquals('200', $response->getStatusCode());
-
     }
-
 }

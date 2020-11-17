@@ -27,7 +27,8 @@ class GenreModelTest extends TestCase
      * @test
      * @return void
      */
-    public function genreCreatedIsNotNull() {
+    public function genreCreatedIsNotNull()
+    {
         $genre = Genre::factory()->create();
         $this->assertNotNull($genre->id);
         $this->assertNotNull($genre->name);
@@ -37,7 +38,8 @@ class GenreModelTest extends TestCase
      * @test
      * @return void
      */
-    public function genreShouldHaveAnimes() {
+    public function genreShouldHaveAnimes()
+    {
         $genre = Genre::factory(['id' => 10])->has(
             Anime::factory()->count(3)->state(new Sequence(
                 ['id' => 1],
@@ -61,8 +63,4 @@ class GenreModelTest extends TestCase
 
         $this->assertCount(3, $genre->animes);
     }
-
-
-
-
 }

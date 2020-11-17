@@ -20,7 +20,8 @@ class GenresController extends Controller
     }
 
 
-    public function index($genreName) {
+    public function index($genreName)
+    {
         // check if genre exist in db
         $genre = Genre::where('name', $genreName)->firstOrFail();
 

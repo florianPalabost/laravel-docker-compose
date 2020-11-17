@@ -17,7 +17,8 @@ class AnimeUserController extends Controller
         $this->animeService = $animeService;
     }
 
-    public function recordUserAnimeStatus(Request $request) {
+    public function recordUserAnimeStatus(Request $request)
+    {
         if ($request->json('property') === '') {
             throw new \Error('no property pass');
         }
@@ -31,19 +32,15 @@ class AnimeUserController extends Controller
 
                 /** @var AnimeUser $animeUser */
                 $animeUser = $this->animeService->saveUserAnimeStatus($animeId, $user->id, $property);
-                if($animeUser->wasChanged() || $animeUser->wasRecentlyCreated) {
-                    return \response()->json(['data'=> $animeUser],201);
+                if ($animeUser->wasChanged() || $animeUser->wasRecentlyCreated) {
+                    return \response()->json(['data' => $animeUser], 201);
+                } else {
+                    return \response()->json(['message' => 'cant change property'], 500);
                 }
-                else {
-                    return \response()->json(['message'=> 'cant change property'], 500);
-                }
-            }
-            else {
+            } else {
                 throw new \Error('no anime id given !');
             }
-
-        }
-        else {
+        } else {
             throw new \Error($property . ' property is not recorded :');
         }
     }

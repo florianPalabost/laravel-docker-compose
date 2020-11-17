@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Response;
 
-
 class AnimesController extends Controller
 {
     // TODO switch to php 7.4 for typage
@@ -94,11 +93,9 @@ class AnimesController extends Controller
             $stat_anime = count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
 
             return view('animes.show', compact('anime', 'recommendations', 'stat_anime'));
-        }
-        else {
+        } else {
             throw new \Exception('No anime with title ' . $title);
         }
-
     }
 
     /**
@@ -134,6 +131,4 @@ class AnimesController extends Controller
     {
         //
     }
-
-
 }

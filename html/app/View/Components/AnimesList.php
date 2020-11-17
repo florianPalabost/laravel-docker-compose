@@ -20,7 +20,6 @@ class AnimesList extends Component
     {
         $this->animes = $animes;
         $this->title = $title;
-
     }
 
     /**

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Anime;
 use App\AnimeUser;
@@ -23,26 +21,28 @@ class AnimeService
         $this->logger = $logger;
     }
 
-    public function retrieveAnimes($isPaginated = true) {
+    public function retrieveAnimes($isPaginated = true)
+    {
         try {
             if ($isPaginated) {
                 return DB::table('animes')->whereNotNull('title')->orderBy('title')->paginate(30);
             }
             return DB::table('animes')->whereNotNull('title')->orderBy('title')->get();
-        }
-        catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
         }
     }
 
-    public function retrieveAnime(string $title) {
+    public function retrieveAnime(string $title)
+    {
         if (empty($title)) {
             return null;
         }
         return Anime::where('title', $title)->firstOrFail();
     }
 
-    public function retrieveLatestAnimes() {
+    public function retrieveLatestAnimes()
+    {
         return DB::table('animes')->whereNotNull('title')->latest()->get();
     }
 
@@ -51,10 +51,9 @@ class AnimeService
         if (empty($genre)) {
             throw new \Error('no genre pass to function');
         }
-        if(Anime::count() > 30) {
+        if (Anime::count() > 30) {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->paginate(30);
-        }
-        else {
+        } else {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->get();
         }
     }
@@ -71,7 +70,7 @@ class AnimeService
             ['anime_id' => $animeId],
             ['user_id' => $userId],
         );
-        $animeUser->$property = $animeUser->$property ? false: true;
+        $animeUser->$property = $animeUser->$property ? false : true;
 
         switch ($property) {
             case 'like':
@@ -96,7 +95,5 @@ class AnimeService
 
         $animeUser->save();
         return $animeUser;
-
     }
-
 }

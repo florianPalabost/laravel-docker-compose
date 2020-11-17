@@ -31,7 +31,8 @@ class AnimeModelTest extends TestCase
     /**
      * @test
      */
-    public function animeCreatedNotNull() {
+    public function animeCreatedNotNull()
+    {
         // Given
         // When
         $anime = Anime::factory()->create();
@@ -47,7 +48,8 @@ class AnimeModelTest extends TestCase
      * test relationship between Anime & Genre with pivot table anime_genre
      * @test
      */
-    public function animeBelongToManyGenres() {
+    public function animeBelongToManyGenres()
+    {
         $anime = Anime::factory()
             ->has(Genre::factory()->count(3))
             ->create();
@@ -62,7 +64,8 @@ class AnimeModelTest extends TestCase
      * test relationship between Anime & User with pivot table anime_user
      * @test
      */
-    public function animeBelongToUser() {
+    public function animeBelongToUser()
+    {
         // Given
         $user = User::factory(['id' => 12])->create();
         $anime = Anime::factory(['id' => 11])->create();

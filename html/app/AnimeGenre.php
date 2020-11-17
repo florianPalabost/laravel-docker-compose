@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AnimeGenre extends Model
 {
     use HasFactory;
+
     protected $table = 'anime_genre';
     protected $fillable = [
         'id',
@@ -15,7 +16,8 @@ class AnimeGenre extends Model
         'genre_id'
     ];
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
     public function anime()
@@ -27,5 +29,4 @@ class AnimeGenre extends Model
     {
         return $this->belongsTo('App\Genre');
     }
-
 }

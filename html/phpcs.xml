@@ -12,11 +12,15 @@
     <file>tests</file>
 
     <exclude-pattern>app/Http/Middleware/*</exclude-pattern>
+    <exclude-pattern>app/Console/*</exclude-pattern>
+    <exclude-pattern>app/Exceptions/*</exclude-pattern>
     <exclude-pattern>app/Http/Kernel.php</exclude-pattern>
     <exclude-pattern>app/Http/Exceptions/*</exclude-pattern>
     <exclude-pattern>app/Http/Providers/*</exclude-pattern>
+    <exclude-pattern>app/Http/Controllers/Auth/*</exclude-pattern>
     <exclude-pattern>.idea/*</exclude-pattern>
     <exclude-pattern>bootstrap/*</exclude-pattern>
+    <exclude-pattern>public/*</exclude-pattern>
     <exclude-pattern>config/*</exclude-pattern>
     <exclude-pattern>database/*</exclude-pattern>
     <exclude-pattern>storage/*</exclude-pattern>
@@ -25,6 +29,8 @@
     <exclude-pattern>routes/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>server.php</exclude-pattern>
+    <exclude-pattern>tests/CreatesApplication.php</exclude-pattern>
+    <exclude-pattern>tests/TestCase.php</exclude-pattern>
 
     <exclude-pattern>*/migrations/*</exclude-pattern>
     <exclude-pattern>*/seeds/*</exclude-pattern>
