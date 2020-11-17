@@ -45,6 +45,7 @@ class UsersController extends Controller
 
         $animes = $this->animeService->retrieveAnimes(false);
 
+        /** @var iterable $statsAnimes */
         $statsAnimes = (object) [
             "like" => 0,
             "watch" => 0,
@@ -52,13 +53,16 @@ class UsersController extends Controller
         ];
 
         if (isset($this->user->animes) && count($this->user->animes) > 0) {
-            foreach ($this->user->animes as $anime) {
-                foreach ($statsAnimes as $prop => $count) {
-                    if ($anime->stat_anime->$prop) {
-                        $statsAnimes->$prop++;
+            if (is_array($this->user->animes) || is_object($this->user->animes)) {
+                foreach ($this->user->animes as $anime) {
+                    foreach ($statsAnimes as $prop => $count) {
+                        if ($anime->stat_anime->$prop) {
+                            $statsAnimes->$prop++;
+                        }
                     }
                 }
             }
+
         }
 
         return view('users.dashboard', compact('animes', 'statsAnimes'));

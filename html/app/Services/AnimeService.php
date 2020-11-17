@@ -58,13 +58,14 @@ class AnimeService
         }
     }
 
+
     /**
-     * @param $animeId
-     * @param $userId
-     * @param $property string can be 'like' || 'watch' || 'want_to_watch'
-     * @return bool
+     * @param int $animeId
+     * @param int $userId
+     * @param string $property
+     * @return mixed
      */
-    public function saveUserAnimeStatus($animeId, $userId, $property)
+    public function saveUserAnimeStatus(int $animeId, int $userId, string $property)
     {
         $animeUser = AnimeUser::firstOrNew(
             ['anime_id' => $animeId],
@@ -74,7 +75,6 @@ class AnimeService
 
         switch ($property) {
             case 'like':
-                // on passe like a true
                 if ($animeUser->like) {
                     $animeUser->watch = true;
                     $animeUser->want_to_watch = false;
@@ -91,8 +91,9 @@ class AnimeService
                     $animeUser->like = false;
                 }
                 break;
+            default:
+                throw new \Error('PropertyNotFoundException: This property is not supported : '. $property);
         }
-
         $animeUser->save();
         return $animeUser;
     }
