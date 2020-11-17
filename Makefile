@@ -63,9 +63,11 @@ pa:
 c-req:
 	@$(PHP_EXEC) composer require $(COMMAND_ARGS)
 
-## analyze: 	Larastan/Phpstan, analyse code
+## analyze: 	Analyse code (valid composer,package & phpstan)
 analyze:
+	@$(PHP_EXEC) composer valid
 	@$(PHP_EXEC) vendor/bin/phpstan analyze --memory-limit 1G
+	@$(NPM_EXEC) audit
 
 ## phpcbf: 	rep, php code beautifer & fixer
 phpcbf:
