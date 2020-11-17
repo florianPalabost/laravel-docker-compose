@@ -61,22 +61,24 @@ class AnimesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\Response
     {
         //
+
+        return new \Illuminate\Http\Response();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param $title
+     * @param string $title
      * @return Application|Factory|View
      * @throws \Exception
      */
-    public function show($title)
+    public function show(string $title)
     {
         $anime = $this->animeService->retrieveAnime($title);
         if (isset($anime->anime_id)) {
@@ -90,7 +92,7 @@ class AnimesController extends Controller
 
             $user = auth()->user();
 
-            $stat_anime = count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
+            $stat_anime = isset($anime->users) && count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
 
             return view('animes.show', compact('anime', 'recommendations', 'stat_anime'));
         } else {
@@ -104,7 +106,7 @@ class AnimesController extends Controller
      * @param  int  $id
      * @return View
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         return view('animes.edit');
     }
@@ -112,22 +114,24 @@ class AnimesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): \Illuminate\Http\Response
     {
         //
+
+        return new \Illuminate\Http\Response();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return void
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         //
     }
