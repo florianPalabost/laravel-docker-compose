@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use App\Anime;
-use App\AnimeUser;
 use App\Genre;
 use App\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,19 +14,40 @@ class AnimeModelTest extends TestCase
     use RefreshDatabase;
 
     /**
-     *
      * @test
      * @return void
      */
     public function animeHasBeenCreated()
     {
         // Given
-        // When
         Anime::factory()->create();
-
+        // When
         // Then
         $this->assertDatabaseCount('animes', 1);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function animeWithWrongSubtypeShouldNotHaveBeenCreated()
+    {
+        $this->expectException(QueryException::class);
+        Anime::factory(['subtype' => 'toto_subtype'])->create();
+        $this->assertEquals(0, Anime::count());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function animeWithWrongStatusShouldNotHaveBeenCreated()
+    {
+        $this->expectException(QueryException::class);
+        Anime::factory(['status' => 'toto_status'])->create();
+        $this->assertEquals(0, Anime::count());
+    }
+
 
     /**
      * @test
@@ -34,9 +55,8 @@ class AnimeModelTest extends TestCase
     public function animeCreatedNotNull()
     {
         // Given
-        // When
         $anime = Anime::factory()->create();
-
+        // When
         // Then
         $this->assertNotNull($anime->title);
         $this->assertNotNull($anime->anime_id);
@@ -56,8 +76,7 @@ class AnimeModelTest extends TestCase
 
         $this->assertDatabaseCount('genres', 3);
         $this->assertDatabaseCount('anime_genre', 3);
-
-        $this->assertTrue(count($anime->genres) === 3);
+        $this->assertEquals(3, count($anime->genres));
     }
 
     /**
