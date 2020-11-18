@@ -2,12 +2,15 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 
 class Anime extends Model
 {
+    use HasFactory;
     use Searchable;
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -33,13 +36,14 @@ class Anime extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function genres() {
+    public function genres()
+    {
         return $this->belongsToMany('App\Genre', 'anime_genre');
     }
 
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany('App\User', 'anime_user')
             ->withPivot(['like', 'watch', 'want_to_watch'])->as('stat_anime');
     }
-
 }

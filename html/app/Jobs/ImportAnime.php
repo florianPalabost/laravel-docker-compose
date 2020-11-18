@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Log;
 
 class ImportAnime implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var Anime
@@ -43,7 +46,7 @@ class ImportAnime implements ShouldQueue
         if (isset($this->anime->anime_id)) {
             $testAnime = DB::table('animes')->where('anime_id', $this->anime->anime_id)->first();
             if ($testAnime !== null && isset($testAnime->anime_id)) {
-                if(isset($testAnime->title)) {
+                if (isset($testAnime->title)) {
                     Log::debug($testAnime->title . ' with id :  ' . $testAnime->anime_id . ' already imported !');
                     return;
                 }
@@ -64,11 +67,10 @@ class ImportAnime implements ShouldQueue
             // save in db
             $this->updateAttributes($this->anime, $content);
         }
-
-
     }
 
-    public function updateAttributes(Anime $anime, $content) {
+    public function updateAttributes(Anime $anime, $content)
+    {
         // TODO properties in //
         $anime->title = $content->title ?? null;
         $anime->synopsis = $content->synopsis ?? null;
@@ -88,11 +90,12 @@ class ImportAnime implements ShouldQueue
 
         $anime->save();
 
-        $anime->waschanged() ? Log::info($anime->title. ' : updated !') :
-            Log::info($anime->title. ' : NOT updated !');
+        $anime->waschanged() ? Log::info($anime->title . ' : updated !') :
+            Log::info($anime->title . ' : NOT updated !');
     }
 
-    public function updateGenresAnime($genres, $anime) {
+    public function updateGenresAnime($genres, $anime)
+    {
         foreach ($genres as $genre) {
             // check if genre already recorded in db
             $genreDb = DB::table('genres')->where('name', $genre->name)->first();
@@ -100,15 +103,13 @@ class ImportAnime implements ShouldQueue
                 // check if we already have a record with this anime id and this genre_id
                 $genreAnimeId = DB::table('anime_genre')->where('anime_id', $anime->id)
                     ->where('genre_id', $genreDb->id)->get();
-                if(isset($genreAnimeId->id) && !empty($genreAnimeId->id)) {
+                if (isset($genreAnimeId->id) && !empty($genreAnimeId->id)) {
                     continue;
-                }
-                else {
+                } else {
                     // this association of anime id & genre id doent exist, we create it
                     $anime->genres()->attach($genreDb->id);
                 }
-            }
-            else {
+            } else {
                 // genre not exist in db so we create it
                 $newGenre = new Genre([
                     'name' => $genre->name

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Genre;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class GenreFactory extends Factory
 {
@@ -23,8 +24,8 @@ class GenreFactory extends Factory
     {
         return [
             'id' => rand(0,155),
-            'name' => $this->faker->name,
-            'description' => $this->faker->description
+            'name' => Str::random(15),
+            'description' => Str::random(100)
         ];
     }
 }

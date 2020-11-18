@@ -22,7 +22,12 @@ class AnimeUserFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'id' => rand(0,155),
+            'anime_id' => 10,
+            'user_id' => 10,
+            'like' => false,
+            'watch' => false,
+            'want_to_watch' => false,
         ];
     }
 }

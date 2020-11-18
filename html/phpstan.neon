@@ -17,3 +17,4 @@ parameters:
 
     checkMissingIterableValueType: false
     checkModelProperties: true
+    reportUnmatchedIgnoredErrors: false

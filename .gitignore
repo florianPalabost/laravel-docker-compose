@@ -22,3 +22,5 @@ html/public/js/
 html/tests/reports/
 
 html/phpunit.xml.bak
+
+html/.editorconfig

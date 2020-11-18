@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Anime;
 use App\AnimeUser;
@@ -23,26 +21,28 @@ class AnimeService
         $this->logger = $logger;
     }
 
-    public function retrieveAnimes($isPaginated = true) {
+    public function retrieveAnimes($isPaginated = true)
+    {
         try {
             if ($isPaginated) {
                 return DB::table('animes')->whereNotNull('title')->orderBy('title')->paginate(30);
             }
             return DB::table('animes')->whereNotNull('title')->orderBy('title')->get();
-        }
-        catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
         }
     }
 
-    public function retrieveAnime(string $title) {
+    public function retrieveAnime(string $title)
+    {
         if (empty($title)) {
             return null;
         }
         return Anime::where('title', $title)->firstOrFail();
     }
 
-    public function retrieveLatestAnimes() {
+    public function retrieveLatestAnimes()
+    {
         return DB::table('animes')->whereNotNull('title')->latest()->get();
     }
 
@@ -51,31 +51,30 @@ class AnimeService
         if (empty($genre)) {
             throw new \Error('no genre pass to function');
         }
-        if(Anime::count() > 30) {
+        if (Anime::count() > 30) {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->paginate(30);
-        }
-        else {
+        } else {
             return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->get();
         }
     }
 
+
     /**
-     * @param $animeId
-     * @param $userId
-     * @param $property string can be 'like' || 'watch' || 'want_to_watch'
-     * @return bool
+     * @param int $animeId
+     * @param int $userId
+     * @param string $property
+     * @return mixed
      */
-    public function saveUserAnimeStatus($animeId, $userId, $property)
+    public function saveUserAnimeStatus(int $animeId, int $userId, string $property)
     {
         $animeUser = AnimeUser::firstOrNew(
             ['anime_id' => $animeId],
             ['user_id' => $userId],
         );
-        $animeUser->$property = $animeUser->$property ? false: true;
+        $animeUser->$property = $animeUser->$property ? false : true;
 
         switch ($property) {
             case 'like':
-                // on passe like a true
                 if ($animeUser->like) {
                     $animeUser->watch = true;
                     $animeUser->want_to_watch = false;
@@ -92,11 +91,10 @@ class AnimeService
                     $animeUser->like = false;
                 }
                 break;
+            default:
+                throw new \Error('PropertyNotFoundException: This property is not supported : '. $property);
         }
-
         $animeUser->save();
         return $animeUser;
-
     }
-
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Genre extends Model
 {
     use HasFactory;
+
     protected $primaryKey = 'id';
     protected $fillable = [
         'id',
@@ -17,7 +18,8 @@ class Genre extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function animes() {
+    public function animes()
+    {
         return $this->belongsToMany('App\Anime', 'anime_genre');
     }
 }

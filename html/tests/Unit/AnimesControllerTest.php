@@ -10,16 +10,5 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AnimesControllerTest extends TestCase
 {
-    public function testRouteImportAddJobs() {
-        // Given
-        Queue::fake();
-
-        // When
-        $response = $this->get('/animes/import/all');
-
-        // Then
-        $this->assertEquals(200, $response->status());
-        Queue::assertPushed(ImportAnime::class, 3);
-    }
 
 }

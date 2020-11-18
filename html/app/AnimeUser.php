@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AnimeUser extends Model
 {
     use HasFactory;
+
     protected $table = 'anime_user';
     protected $fillable = [
         'id',
@@ -18,11 +19,13 @@ class AnimeUser extends Model
         'want_to_watch'
     ];
 
-    public function anime() {
+    public function anime()
+    {
         return $this->belongsTo('App\Anime');
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
 }
