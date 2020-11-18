@@ -17,7 +17,7 @@ class GenreModelTest extends TestCase
      * @test
      * @return void
      */
-    public function genreHasBeenCreated()
+    public function genreHasBeenCreatedAndPersisted()
     {
         Genre::factory()->create();
         $this->assertDatabaseCount('genres', 1);
@@ -49,12 +49,11 @@ class GenreModelTest extends TestCase
         )->create();
 
         $animeGenre1 = AnimeGenre::where('anime_id', 1)->where('genre_id', 10)->get();
-        $this->assertNotNull($animeGenre1);
-
         $animeGenre2 = AnimeGenre::where('anime_id', 2)->where('genre_id', 10)->get();
-        $this->assertNotNull($animeGenre2);
-
         $animeGenre3 = AnimeGenre::where('anime_id', 3)->where('genre_id', 10)->get();
+
+        $this->assertNotNull($animeGenre1);
+        $this->assertNotNull($animeGenre2);
         $this->assertNotNull($animeGenre3);
 
         $this->assertEquals(3, Anime::count());
