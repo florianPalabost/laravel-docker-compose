@@ -31,16 +31,20 @@ class UsersController extends Controller
     {
         if ($request->ajax()) {
             $data = $this->animeService->retrieveLatestAnimes();
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('title', function ($row) {
-                    return '<a target="_blank" rel="noreferrer noopenner" href="' . route('animes.show', $row->title) . '">' . $row->title . '</a>';
-                })
-                ->addColumn('action', function ($row) {
-                    return '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                })
-                ->rawColumns(['action', 'title'])
-                ->make(true);
+            try {
+                return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('title', function ($row) {
+                        return '<a target="_blank" rel="noreferrer noopenner" href="' . route('animes.show', $row->title) . '">' . $row->title . '</a>';
+                    })
+                    ->addColumn('action', function ($row) {
+                        return '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    })
+                    ->rawColumns(['action', 'title'])
+                    ->make(true);
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
         }
 
         $animes = $this->animeService->retrieveAnimes(false);
@@ -52,17 +56,17 @@ class UsersController extends Controller
             "want_to_watch" => 0
         ];
 
-        if (isset($this->user->animes) && count($this->user->animes) > 0) {
-            if (is_array($this->user->animes) || is_object($this->user->animes)) {
-                foreach ($this->user->animes as $anime) {
-                    foreach ($statsAnimes as $prop => $count) {
-                        if ($anime->stat_anime->$prop) {
-                            $statsAnimes->$prop++;
-                        }
+        if (
+            (is_array($this->user->animes) || is_object($this->user->animes))
+            && isset($this->user->animes) && count($this->user->animes) > 0
+        ) {
+            foreach ($this->user->animes as $anime) {
+                foreach ($statsAnimes as $prop => $count) {
+                    if ($anime->stat_anime->$prop) {
+                        $statsAnimes->$prop++;
                     }
                 }
             }
-
         }
 
         return view('users.dashboard', compact('animes', 'statsAnimes'));

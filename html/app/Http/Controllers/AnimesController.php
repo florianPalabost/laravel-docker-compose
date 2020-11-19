@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AnimeNotFoundException;
 use App\Services\AnimeService;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -82,22 +82,12 @@ class AnimesController extends Controller
     {
         $anime = $this->animeService->retrieveAnime($title);
         if (isset($anime->anime_id)) {
-            $client = new Client();
-            $uri = env('API_LINK') . $anime->anime_id . '/recommendations';
-            $promise = $client->getAsync($uri);
-            $response = $promise->wait();
-            $content = $response->getBody(true)->getContents();
-            $content = json_decode($content);
-            $recommendations = $content->recommendations;
-
+            $recommendations = $this->animeService->retrieveRecommendations($anime->anime_id);
             $user = auth()->user();
-
             $stat_anime = isset($anime->users) && count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
-
             return view('animes.show', compact('anime', 'recommendations', 'stat_anime'));
-        } else {
-            throw new \Exception('No anime with title ' . $title);
         }
+        throw new AnimeNotFoundException('No anime with title ' . $title);
     }
 
     /**
