@@ -4,9 +4,16 @@ namespace App\Services;
 
 use App\Anime;
 use App\AnimeUser;
+use App\Exceptions\AnimeNotFoundException;
+use App\Exceptions\PropertyNotFoundException;
 use App\Genre;
+use DeepCopy\Exception\PropertyException;
+use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
 
 class AnimeService
 {
@@ -21,40 +28,69 @@ class AnimeService
         $this->logger = $logger;
     }
 
+    /**
+     * @param bool $isPaginated
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection|string
+     */
     public function retrieveAnimes($isPaginated = true)
     {
         try {
-            if ($isPaginated) {
-                return DB::table('animes')->whereNotNull('title')->orderBy('title')->paginate(30);
-            }
-            return DB::table('animes')->whereNotNull('title')->orderBy('title')->get();
+            $animes = DB::table('animes')->whereNotNull('title')->orderBy('title');
+            return $isPaginated ? $animes->paginate(30) : $animes->get();
+        } catch (ModelNotFoundException $e) {
+            return $e->getMessage();
         } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
+            return $e->getMessage();
         }
     }
 
+    /**
+     * @param string $title
+     * @return Anime|string
+     */
     public function retrieveAnime(string $title)
     {
         if (empty($title)) {
-            return null;
+            throw new \Error('No title pass to function');
         }
-        return Anime::where('title', $title)->firstOrFail();
+        try {
+            return Anime::where('title', $title)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return $e->getMessage();
+        }
     }
 
+    /**
+     * @return \Illuminate\Support\Collection|string
+     */
     public function retrieveLatestAnimes()
     {
-        return DB::table('animes')->whereNotNull('title')->latest()->get();
+        try {
+            return DB::table('animes')->whereNotNull('title')->latest()->get();
+        } catch (ModelNotFoundException $e) {
+            return $e->getMessage();
+        }
     }
 
-    public function retrieveAnimesWithGenre($genre)
+    /**
+     * @param  Genre $genre
+     * @return \Illuminate\Support\Collection|string
+     */
+    public function retrieveAnimesWithGenre(Genre $genre)
     {
         if (empty($genre)) {
             throw new \Error('no genre pass to function');
         }
-        if (Anime::count() > 30) {
-            return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->paginate(30);
-        } else {
-            return Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title')->get();
+        try {
+            $animes = Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title');
+            return Anime::count() > 30 ? $animes->paginate(30) : $animes->get();
+        } catch (AnimeNotFoundException $e) {
+            return $e->getMessage();
+        } catch (ModelNotFoundException $e) {
+            return $e->getMessage();
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 
@@ -64,13 +100,22 @@ class AnimeService
      * @param int $userId
      * @param string $property
      * @return mixed
+     * @throws PropertyNotFoundException
      */
     public function saveUserAnimeStatus(int $animeId, int $userId, string $property)
     {
-        $animeUser = AnimeUser::firstOrNew(
-            ['anime_id' => $animeId],
-            ['user_id' => $userId],
-        );
+        if (empty($animeId) || empty($userId) || empty($property)) {
+            throw new InvalidParameterException(' Wrong Anime id or User id or property ');
+        }
+        try {
+            $animeUser = AnimeUser::firstOrNew(
+                ['anime_id' => $animeId],
+                ['user_id' => $userId],
+            );
+        } catch (AnimeNotFoundException $e) {
+            return $e->getMessage();
+        }
+
         $animeUser->$property = $animeUser->$property ? false : true;
 
         switch ($property) {
@@ -92,9 +137,24 @@ class AnimeService
                 }
                 break;
             default:
-                throw new \Error('PropertyNotFoundException: This property is not supported : '. $property);
+                throw new PropertyNotFoundException(' This property is not supported : ' . $property);
         }
         $animeUser->save();
         return $animeUser;
+    }
+
+    public function retrieveRecommendations(string $animeId)
+    {
+        if (empty($animeId)) {
+            return null;
+        }
+
+        $client = new Client();
+        $uri = env('API_LINK') . $animeId . '/recommendations';
+        $promise = $client->getAsync($uri);
+        $response = $promise->wait();
+        $content = $response->getBody(true)->getContents();
+        $content = json_decode($content);
+        return $content->recommendations;
     }
 }

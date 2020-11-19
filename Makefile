@@ -63,9 +63,10 @@ pa:
 c-req:
 	@$(PHP_EXEC) composer require $(COMMAND_ARGS)
 
-## analyze: 	Analyse code (valid composer,package & phpstan)
+## analyze: 	Analyse code (valid composer, phpstan, phpcbf & npm audit)
 analyze:
 	@$(PHP_EXEC) composer valid
+	@$(PHP_EXEC) vendor/bin/phpcbf $(COMMAND_ARGS) -d " memory_limit=256M"
 	@$(PHP_EXEC) vendor/bin/phpstan analyze --memory-limit 1G
 	@$(NPM_EXEC) audit
 
