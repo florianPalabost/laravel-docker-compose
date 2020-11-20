@@ -38,6 +38,10 @@ npm-install:
 npm-watch:
 	@$(NPM_EXEC) run watch
 
+## npm-remove: 	Remove deps
+npm-remove:
+	@$(NPM_EXEC) remove $(COMMAND_ARGS)
+
 ## logs: 	Log all container
 logs:
 	$(DOCKER_COMPOSE) logs -f
