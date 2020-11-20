@@ -20,18 +20,17 @@
 <body>
     <div id="app" class="d-flex wrapper">
 
-    @if(Route::currentRouteName() === 'dashboard')
+        @auth()
             @include('layouts.navbars.sidebar')
+        @endauth
+
+        @if (session('status'))
+            <div class="card-body">
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+            </div>
         @endif
-
-
-        <div class="card-body">
-            @if (session('status'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('status') }}
-                </div>
-            @endif
-        </div>
         <div id="page-content-wrapper">
             @include('layouts.navbars.nav')
             <div class="container-fluid">

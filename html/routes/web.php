@@ -32,3 +32,4 @@ Route::get('/animes/import/all', 'AnimesController@import')->name('import-animes
 
 Route::get('/genres/{genre}', 'GenresController@index')->name('genres.index');
 
+Route::post('animes/filters', 'AnimesController@applyFiltersAnimes')->name('animes.searchFilters');

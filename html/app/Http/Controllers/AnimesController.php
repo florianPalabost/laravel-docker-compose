@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AnimeNotFoundException;
+use App\Genre;
 use App\Services\AnimeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -42,9 +43,10 @@ class AnimesController extends Controller
         // save animes retrieved in cache
 
         // filters ?
-
+        //todo service
+        $genres = Genre::all()->pluck('name');
         // user ?
-        return view('animes.index', compact('animes'));
+        return view('animes.index', compact('animes', 'genres'));
     }
 
     /**
@@ -124,5 +126,10 @@ class AnimesController extends Controller
     public function destroy(int $id)
     {
         //
+    }
+
+    public function applyFiltersAnimes(Request $request)
+    {
+        dd($request->all());
     }
 }

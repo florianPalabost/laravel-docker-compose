@@ -7,11 +7,12 @@ use App\AnimeUser;
 use App\Exceptions\AnimeNotFoundException;
 use App\Exceptions\PropertyNotFoundException;
 use App\Genre;
-use DeepCopy\Exception\PropertyException;
 use GuzzleHttp\Client;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Log\Logger;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
@@ -30,7 +31,7 @@ class AnimeService
 
     /**
      * @param bool $isPaginated
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Support\Collection|string
+     * @return LengthAwarePaginator|Collection|string
      */
     public function retrieveAnimes($isPaginated = true)
     {
@@ -62,7 +63,7 @@ class AnimeService
     }
 
     /**
-     * @return \Illuminate\Support\Collection|string
+     * @return Collection|string
      */
     public function retrieveLatestAnimes()
     {
@@ -75,7 +76,7 @@ class AnimeService
 
     /**
      * @param  Genre $genre
-     * @return \Illuminate\Support\Collection|string
+     * @return Collection|string
      */
     public function retrieveAnimesWithGenre(Genre $genre)
     {
@@ -85,11 +86,7 @@ class AnimeService
         try {
             $animes = Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title');
             return Anime::count() > 30 ? $animes->paginate(30) : $animes->get();
-        } catch (AnimeNotFoundException $e) {
-            return $e->getMessage();
-        } catch (ModelNotFoundException $e) {
-            return $e->getMessage();
-        } catch (\Exception $e) {
+        } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
     }
@@ -143,18 +140,26 @@ class AnimeService
         return $animeUser;
     }
 
+    /**
+     * @param string $animeId
+     * @return string|mixed|null
+     */
     public function retrieveRecommendations(string $animeId)
     {
         if (empty($animeId)) {
             return null;
         }
 
-        $client = new Client();
-        $uri = env('API_LINK') . $animeId . '/recommendations';
-        $promise = $client->getAsync($uri);
-        $response = $promise->wait();
-        $content = $response->getBody(true)->getContents();
-        $content = json_decode($content);
-        return $content->recommendations;
+        try {
+            $client = new Client();
+            $uri = env('API_LINK') . $animeId . '/recommendations';
+            $promise = $client->getAsync($uri);
+            $response = $promise->wait();
+            $content = $response->getBody(true)->getContents();
+            $content = json_decode($content);
+            return $content->recommendations;
+        } catch (HttpClientException $e) {
+            return $e->getMessage();
+        }
     }
 }
