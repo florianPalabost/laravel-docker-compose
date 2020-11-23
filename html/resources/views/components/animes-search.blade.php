@@ -1,43 +1,21 @@
-<div class="container-fluid">
+<div class="container-fluid mt-5">
     <div class="row justify-content-center">
-        {!! Form::open(['route' => 'animes.searchFilters', 'method' => 'POST', 'class' => 'w-100 inline-flex']) !!}
+        {!! Form::open(['route' => 'animes.searchFilters', 'method' => 'POST', 'class' => 'w-100 inline-flex', 'id' => 'form-filter']) !!}
         <div class="col-3">
-            <div class="form-group">
-                <select class="form-control selectpicker" id="genres" multiple="multiple" name="genres[]" title="Choose genre(s)">
-                    @foreach ($genres as $genre)
-                        <option value="{{ $genre }}">
-                            {{ $genre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-animes-select-filter :nameFilter="'genres'" :options="$genres" :filters="$filters"></x-animes-select-filter>
         </div>
 
         <div class="col-3">
-            <div class="form-group">
-                <select class="form-control selectpicker" id="subtype" multiple="multiple" name="subtypes[]" title="Choose type(s)">
-                    <option value="TV">TV</option>
-                    <option value="OVA">ONA</option>
-                    <option value="Movie">Movie</option>
-                    <option value="Music">Music</option>
-                    <option value="Special">Special</option>
-                </select>
-            </div>
+            <x-animes-select-filter :nameFilter="'subtypes'" :options="$types" :filters="$filters"></x-animes-select-filter>
         </div>
 
         <div class="col-3">
-            <div class="form-group">
-                <select class="form-control selectpicker" id="status" multiple="multiple" name="status[]" title="Choose statu(s)">
-                    <option value="current">In progress</option>
-                    <option value="finished">Finished</option>
-                    <option value="unreleased">Unreleased</option>
-                    <option value="tba">tba</option>
-                    <option value="upcoming">Upcoming</option>
-                </select>
-            </div>
+            <x-animes-select-filter :nameFilter="'subtypes'" :options="$status" :filters="$filters" :disabled="true"></x-animes-select-filter>
         </div>
         <div class="col-3">
-            {{Form::submit('Filtrez', ['class' => 'btn btn-outline-dark mx-auto d-block'])}}
+            {{Form::submit('Filtrer', ['class' => 'btn btn-outline-dark '])}}
+            {{Form::reset('Reset', ['class' => 'btn btn-outline-danger ml-5', 'id' => 'resetBtn'])}}
+            {{ Form::close() }}
         </div>
     </div>
 </div>
@@ -48,4 +26,16 @@
         display: inline-flex;
     }
     </style>
+@endsection
+@section('script')
+    <script type="text/javascript">
+        $(() => {
+            const resetBtn = document.querySelector('#resetBtn');
+            resetBtn.addEventListener('click', () => {
+                const form = document.getElementById('form-filter');
+                form.reset();
+           });
+
+        });
+    </script>
 @endsection

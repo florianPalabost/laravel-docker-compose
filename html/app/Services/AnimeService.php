@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Anime;
+use App\AnimeGenre;
 use App\AnimeUser;
 use App\Exceptions\AnimeNotFoundException;
 use App\Exceptions\PropertyNotFoundException;
@@ -161,5 +162,34 @@ class AnimeService
         } catch (HttpClientException $e) {
             return $e->getMessage();
         }
+    }
+
+    public function retrieveAnimesWithFilters(array $filters)
+    {
+        if (count($filters)  === 1) {
+            return null;
+        }
+
+        // retrieve each genre_ids
+        if (isset($filters['genres'])) {
+            $genreIDs = [];
+            foreach ($filters['genres'] as $genre) {
+                $genreIDs[] = Genre::where('name', $genre)->pluck('id');
+            }
+
+            // we find all the animes which posseded all the genres put in filters
+            $animeIds = AnimeGenre::whereIn('genre_id', $genreIDs)->pluck('anime_id');
+        }
+
+        $query = DB::table('animes');
+        if (isset($animeIds)) {
+            $query = $query->whereIn('animes.id', $animeIds);
+        }
+        if (isset($animeIds)) {
+            $query = $query->whereIn('animes.subtype', $filters['subtypes']);
+        }
+
+        return $query->paginate(30);
+
     }
 }

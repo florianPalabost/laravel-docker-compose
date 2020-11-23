@@ -8,15 +8,18 @@ use Illuminate\View\Component;
 class AnimesSearch extends Component
 {
     public $genres;
+    public $filters;
 
     /**
      * Create a new component instance.
      *
      * @param array|Model $genres
+     * @param array $filters
      */
-    public function __construct($genres)
+    public function __construct($genres, array $filters)
     {
         $this->genres = $genres;
+        $this->filters = $filters;
     }
 
     /**
@@ -26,6 +29,8 @@ class AnimesSearch extends Component
      */
     public function render()
     {
-        return view('components.animes-search');
+        $types = ['TV', 'ONA', 'Movie', 'Music', 'Special'];
+        $status = ['current', 'finished', 'unreleased', 'tba', 'upcoming'];
+        return view('components.animes-search', compact('types', 'status'));
     }
 }

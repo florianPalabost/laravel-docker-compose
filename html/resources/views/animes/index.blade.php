@@ -6,7 +6,7 @@
 @section('content')
 
    @isset($genres)
-        <x-animes-search :genres="$genres"></x-animes-search>
+        <x-animes-search :genres="$genres" :filters="$filters"></x-animes-search>
    @endisset
 
     @isset($title)

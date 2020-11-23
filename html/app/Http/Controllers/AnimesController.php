@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Anime;
 use App\Exceptions\AnimeNotFoundException;
 use App\Genre;
 use App\Services\AnimeService;
@@ -34,19 +35,36 @@ class AnimesController extends Controller
     /**
      * Display a listing of animes.
      *
+     * @param Request $request
      * @return View|Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $animes = $this->animeService->retrieveAnimes();
+
+        //todo service
+        $genres = Genre::all()->pluck('name');
+        $filters = $request->get('filters') ?? [];
+
+        if ($request->has('filters')) {
+            $query = array_key_exists('genres', $request->get('filters')) ?
+                Anime::with('genres') : Anime::query();
+
+            $query = $query->filterBy($request->get('filters'));
+
+            $animes = $request->has('page') ?
+                $query->paginate(30, ['*'], 'page', $request->get('page')) :
+                $query->paginate(30);
+        } else {
+            $animes = $this->animeService->retrieveAnimes();
+        }
+
+        $animes->appends($request->all())->links();
+
 
         // save animes retrieved in cache
 
-        // filters ?
-        //todo service
-        $genres = Genre::all()->pluck('name');
         // user ?
-        return view('animes.index', compact('animes', 'genres'));
+        return view('animes.index', compact('animes', 'genres', 'filters'));
     }
 
     /**
@@ -128,8 +146,16 @@ class AnimesController extends Controller
         //
     }
 
+    // todo use index animes route on get (form method)
     public function applyFiltersAnimes(Request $request)
     {
-        dd($request->all());
+        try {
+            $filters = $request->only('genres', 'subtypes');
+//            $animes = $this->animeService->retrieveAnimesWithFilters($filters);
+//            $animes->appends($filters)->links();
+            return redirect()->route('animes.index', [ 'filters' => $filters]);
+        } catch (\Exception $e) {
+            return back()->withErrors($e->getMessage());
+        }
     }
 }

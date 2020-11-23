@@ -34,8 +34,7 @@
         <div id="page-content-wrapper">
             @include('layouts.navbars.nav')
             <div class="container-fluid">
-            @yield('content')
-
+                @yield('content')
             </div>
 
             @include('layouts.footers.footer')
