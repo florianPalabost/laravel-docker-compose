@@ -190,6 +190,18 @@ class AnimeService
         }
 
         return $query->paginate(30);
+    }
 
+    /**
+     * @param string $search
+     * @return string|Collection|Anime
+     */
+    public function retrieveLikeAnimes(string $search)
+    {
+        try {
+            return Anime::where('title', 'ilike', '%' . $search . '%')->paginate(10);
+        } catch (AnimeNotFoundException | ModelNotFoundException $e) {
+            return $e->getMessage();
+        }
     }
 }

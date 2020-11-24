@@ -22,9 +22,9 @@ Route::get('/users/animes/{status}', 'UsersController@retrieveAnimesUserWithStat
 Route::post('/users/stats', 'AnimeUserController@recordUserAnimeStatus')->name('ajaxAnimeUser.post');
 
 
+Route::get('/animes/search/{q?}', 'AnimesController@searchAnimes')->name('animes.search');
 Route::resource('animes',AnimesController::class );
 Route::post('animes', 'AnimesController@applyFiltersAnimes')->name('animes.searchFilters');
-Route::get('/animes/import/all', 'AnimesController@import')->name('import-animes');
 
 Route::get('/genres/{genre}', 'GenresController@index')->name('genres.index');
 

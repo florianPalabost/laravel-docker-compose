@@ -15,7 +15,12 @@
 
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
-                <a class="nav-link" href="{{ route('animes.index') }}">Animes</a>
+                <li class="nav-item">
+                    <x-search></x-search>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('animes.index') }}">Animes</a>
+                </li>
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">

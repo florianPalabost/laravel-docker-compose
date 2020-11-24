@@ -98,7 +98,7 @@
     @endif
 </div>
 @endsection
-@section('script')
+@push('script')
     <script src="{{asset('js/carousel.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function($) {
@@ -241,7 +241,7 @@
         }
 
     </script>
-@endsection
+@endpush
 @section('css')
     <link href="{{ asset('css/carousel.css') }}" rel="stylesheet">
 

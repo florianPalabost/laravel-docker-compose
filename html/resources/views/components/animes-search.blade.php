@@ -27,7 +27,7 @@
     }
     </style>
 @endsection
-@section('script')
+@push('script')
     <script type="text/javascript">
         $(() => {
             const resetBtn = document.querySelector('#resetBtn');
@@ -38,4 +38,4 @@
 
         });
     </script>
-@endsection
+@endpush

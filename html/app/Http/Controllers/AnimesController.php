@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Response;
+use Symfony\Component\Console\Input\Input;
 
 class AnimesController extends Controller
 {
@@ -157,5 +158,14 @@ class AnimesController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors($e->getMessage());
         }
+    }
+
+    public function searchAnimes(Request $request)
+    {
+        if ($request->get('q') && strlen($request->get('q')) > 1) {
+            $animes = $this->animeService->retrieveLikeAnimes($request->get('q'));
+            return count($animes) > 0 ? $animes : [];
+        }
+        return [];
     }
 }
