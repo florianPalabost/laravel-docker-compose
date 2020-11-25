@@ -12,12 +12,7 @@
 */
 
 Route::get('/', function () {
-    $time_sql = DB::select('select NOW() as current_time');
-    $current_db_time = current($time_sql)->current_time;
-
-    $dt = new DateTime($current_db_time);
-
-    return view('welcome')->with(['current_time' => $dt->format('c')]);
+    return view('welcome');
 })->name('home');
 
 Auth::routes();
@@ -27,8 +22,8 @@ Route::get('/users/animes/{status}', 'UsersController@retrieveAnimesUserWithStat
 Route::post('/users/stats', 'AnimeUserController@recordUserAnimeStatus')->name('ajaxAnimeUser.post');
 
 
+Route::get('/animes/search/{q?}', 'AnimesController@searchAnimes')->name('animes.search');
 Route::resource('animes',AnimesController::class );
-Route::get('/animes/import/all', 'AnimesController@import')->name('import-animes');
 
 Route::get('/genres/{genre}', 'GenresController@index')->name('genres.index');
 

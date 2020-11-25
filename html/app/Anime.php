@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Utilities\FilterBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
@@ -45,5 +46,13 @@ class Anime extends Model
     {
         return $this->belongsToMany('App\User', 'anime_user')
             ->withPivot(['like', 'watch', 'want_to_watch'])->as('stat_anime');
+    }
+
+    public function scopeFilterBy($query, $filters)
+    {
+        $namespace = 'App\Utilities\AnimesFilters';
+        $filter = new FilterBuilder($query, $filters, $namespace);
+
+        return $filter->apply();
     }
 }

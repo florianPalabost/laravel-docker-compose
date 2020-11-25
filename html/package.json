@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.1",
+        "bootstrap-select": "^1.13.18",
         "magnific-popup": "^1.1.0",
         "notiflix": "^2.6.0"
     }

@@ -6,6 +6,7 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-select/dist/css/bootstrap-select.min.css';
 
 @import 'sidebar';
 
@@ -20,4 +21,18 @@
 
 .no-background {
     background: none;
+}
+
+.no-display {
+    display: none;
+}
+#results {
+    background: rgb(255, 255, 255);
+    height: 22em;
+    position: absolute;
+    overflow-y: scroll;
+    z-index: 1;
+}
+.poster{
+    width: 7em;
 }
