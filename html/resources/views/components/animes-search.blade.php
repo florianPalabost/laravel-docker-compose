@@ -1,6 +1,6 @@
 <div class="container-fluid mt-5">
     <div class="row justify-content-center">
-        {!! Form::open(['route' => 'animes.searchFilters', 'method' => 'POST', 'class' => 'w-100 inline-flex', 'id' => 'form-filter']) !!}
+        {!! Form::open(['route' => 'animes.index', 'method' => 'GET', 'class' => 'w-100 inline-flex', 'id' => 'form-filter']) !!}
         <div class="col-3">
             <x-animes-select-filter :nameFilter="'genres'" :options="$genres" :filters="$filters"></x-animes-select-filter>
         </div>
@@ -10,7 +10,7 @@
         </div>
 
         <div class="col-3">
-            <x-animes-select-filter :nameFilter="'subtypes'" :options="$status" :filters="$filters" :disabled="true"></x-animes-select-filter>
+            <x-animes-select-filter :nameFilter="'status'" :options="$status" :filters="$filters" :disabled="true"></x-animes-select-filter>
         </div>
         <div class="col-3">
             {{Form::submit('Filtrer', ['class' => 'btn btn-outline-dark '])}}

@@ -17,10 +17,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
+define('PAGINATE', 30);
 class AnimeService
 {
     protected $logger;
-
     /**
      * AnimeService constructor.
      * @param Logger $logger
@@ -38,11 +38,8 @@ class AnimeService
     {
         try {
             $animes = DB::table('animes')->whereNotNull('title')->orderBy('title');
-            return $isPaginated ? $animes->paginate(30) : $animes->get();
-        } catch (ModelNotFoundException $e) {
-            return $e->getMessage();
-        } catch (\Exception $e) {
-            $this->logger->debug($e->getMessage());
+            return $isPaginated ? $animes->paginate(PAGINATE) : $animes->get();
+        } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
     }
@@ -58,7 +55,7 @@ class AnimeService
         }
         try {
             return Anime::where('title', $title)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
+        } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
     }
@@ -70,7 +67,7 @@ class AnimeService
     {
         try {
             return DB::table('animes')->whereNotNull('title')->latest()->get();
-        } catch (ModelNotFoundException $e) {
+        } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
     }
@@ -86,7 +83,7 @@ class AnimeService
         }
         try {
             $animes = Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title');
-            return Anime::count() > 30 ? $animes->paginate(30) : $animes->get();
+            return Anime::count() > 30 ? $animes->paginate(PAGINATE) : $animes->get();
         } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
@@ -189,7 +186,7 @@ class AnimeService
             $query = $query->whereIn('animes.subtype', $filters['subtypes']);
         }
 
-        return $query->paginate(30);
+        return $query->paginate(PAGINATE);
     }
 
     /**
@@ -199,7 +196,7 @@ class AnimeService
     public function retrieveLikeAnimes(string $search)
     {
         try {
-            return Anime::where('title', 'ilike', '%' . $search . '%')->paginate(10);
+            return Anime::where('title', 'ilike', '%' . $search . '%')->paginate(PAGINATE);
         } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }

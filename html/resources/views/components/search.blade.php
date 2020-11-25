@@ -1,27 +1,52 @@
-<form method="GET" class="d-flex d-lg-inline flex-grow-1 flex-lg-grow-0" action="#" autocomplete="off">
-    <div class="input-group mb-10 ">
-        <input type="text" class="form-control from-control-sm" id="q" name="q" placeholder="Enter Anime for search">
-        <div class="input-group-append">
-            <span class="input-group-text" id="SearchButton"><i class="fas fa-search"></i></span>
+<div class="search">
+    <form method="GET" class="d-flex d-lg-inline flex-grow-1 flex-lg-grow-0" action="#" autocomplete="off">
+        <div class="input-group mb-10 ">
+            <input type="text" class="form-control from-control-sm" id="q" name="q" placeholder="Enter Anime for search">
+            <div class="input-group-append">
+                <span class="input-group-text" id="searchButton" style="cursor: pointer"><i class="fas fa-search"></i></span>
+            </div>
         </div>
-    </div>
-</form>
-<div id="results" class="no-display"></div>
+    </form>
+    <div id="results" class="no-display"></div>
+</div>
+
 
 @push('script')
     <script type="text/javascript">
         $(() => {
             const input = document.querySelector('#q');
+            const searchBtn = document.querySelector('#searchButton');
+            const resultsDiv = document.querySelector('#results');
+            // Listen for all clicks on the document
+            document.addEventListener('click', function (event) {
+                if (!event.target.closest('#results')) {
+                    resultsDiv.classList.add('no-display');
+                }
+            }, false);
+
             input.addEventListener('input', async (e) => {
                 if (input.value.length > 1) {
                     const animes = await searchAnimes(input.value);
 
-                    const resultsDiv = document.querySelector('#results');
                     resultsDiv.innerHTML = "";
 
                     // todo link vers all results
 
                     if (Object.keys(animes.data).length > 0) {
+
+                            // create link to see all result
+                            const li = document.createElement('li');
+                            const link = document.createElement('a');
+                            const url = new URL("{{route('animes.search')}}");
+                            url.searchParams.append('q', input.value);
+                            link.href = url.href;
+                            link.innerText = 'See all results';
+                            li.classList.add('mb-4', 'text-center');
+                            link.classList.add('mx-auto');
+                            li.appendChild(link);
+                            resultsDiv.appendChild(li);
+
+
                         for(let i = 0; i < Object.keys(animes.data).length; i++) {
                             createNewAnimeResult(animes?.data[i]);
                         }
@@ -36,18 +61,28 @@
 
                 }
             });
+
+            searchBtn.addEventListener('click', (e) => {
+                if (input.value.length > 1) {
+                    console.log('btn');
+                    const url = new URL("{{route('animes.search')}}");
+                    url.searchParams.append('q', input.value);
+                    window.location.href =  url.href;
+                }
+
+            });
         });
 
         const searchAnimes = async (val) => {
             const url = new URL("{{route('animes.search')}}");
             url.searchParams.append('q', val);
 
-            const response = await fetch(url.href);
-            if (!response.ok) {
+            const response = await axios.get(url.href);
+            if (!response.statusText === 'OK') {
                 throw new Error(`[fetchError] : An error occured when fetching animes with code: ${response.status}`);
             }
-
-            return response.json();
+            console.log(await response);
+            return response?.data;
         };
 
         const createNewAnimeResult = (anime) => {

@@ -41,16 +41,15 @@ class AnimesController extends Controller
      */
     public function index(Request $request)
     {
-
         //todo service
         $genres = Genre::all()->pluck('name');
-        $filters = $request->get('filters') ?? [];
+        $filters = $request->only('genres', 'subtypes') ?? [];
 
-        if ($request->has('filters')) {
-            $query = array_key_exists('genres', $request->get('filters')) ?
+        if ($request->has('genres') || $request->has('subtypes')) {
+            $query = array_key_exists('genres', $filters) ?
                 Anime::with('genres') : Anime::query();
 
-            $query = $query->filterBy($request->get('filters'));
+            $query = $query->filterBy($filters);
 
             $animes = $request->has('page') ?
                 $query->paginate(30, ['*'], 'page', $request->get('page')) :
@@ -58,13 +57,11 @@ class AnimesController extends Controller
         } else {
             $animes = $this->animeService->retrieveAnimes();
         }
-
         $animes->appends($request->all())->links();
 
 
         // save animes retrieved in cache
 
-        // user ?
         return view('animes.index', compact('animes', 'genres', 'filters'));
     }
 
@@ -104,7 +101,6 @@ class AnimesController extends Controller
         $anime = $this->animeService->retrieveAnime($title);
         if (isset($anime->anime_id)) {
             $recommendations = $this->animeService->retrieveRecommendations($anime->anime_id);
-            $user = auth()->user();
             $stat_anime = isset($anime->users) && count($anime->users) > 0 ? $anime->users[0]->stat_anime : null;
             return view('animes.show', compact('anime', 'recommendations', 'stat_anime'));
         }
@@ -147,24 +143,18 @@ class AnimesController extends Controller
         //
     }
 
-    // todo use index animes route on get (form method)
-    public function applyFiltersAnimes(Request $request)
-    {
-        try {
-            $filters = $request->only('genres', 'subtypes');
-//            $animes = $this->animeService->retrieveAnimesWithFilters($filters);
-//            $animes->appends($filters)->links();
-            return redirect()->route('animes.index', [ 'filters' => $filters]);
-        } catch (\Exception $e) {
-            return back()->withErrors($e->getMessage());
-        }
-    }
-
     public function searchAnimes(Request $request)
     {
         if ($request->get('q') && strlen($request->get('q')) > 1) {
             $animes = $this->animeService->retrieveLikeAnimes($request->get('q'));
-            return count($animes) > 0 ? $animes : [];
+            // add search value to the url pagination
+            $animes->appends(['q' => $request->get('q')])->links();
+
+            // check if ajax request or not with this header
+            if ($request->hasHeader('X-Requested-With')) {
+                return count($animes) > 0 ? $animes : [];
+            }
+            return view('animes.result-search', compact('animes'));
         }
         return [];
     }

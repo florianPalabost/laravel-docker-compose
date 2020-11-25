@@ -24,7 +24,6 @@ Route::post('/users/stats', 'AnimeUserController@recordUserAnimeStatus')->name('
 
 Route::get('/animes/search/{q?}', 'AnimesController@searchAnimes')->name('animes.search');
 Route::resource('animes',AnimesController::class );
-Route::post('animes', 'AnimesController@applyFiltersAnimes')->name('animes.searchFilters');
 
 Route::get('/genres/{genre}', 'GenresController@index')->name('genres.index');
 
