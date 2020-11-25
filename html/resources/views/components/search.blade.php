@@ -30,22 +30,9 @@
 
                     resultsDiv.innerHTML = "";
 
-                    // todo link vers all results
-
                     if (Object.keys(animes.data).length > 0) {
-
-                            // create link to see all result
-                            const li = document.createElement('li');
-                            const link = document.createElement('a');
-                            const url = new URL("{{route('animes.search')}}");
-                            url.searchParams.append('q', input.value);
-                            link.href = url.href;
-                            link.innerText = 'See all results';
-                            li.classList.add('mb-4', 'text-center');
-                            link.classList.add('mx-auto');
-                            li.appendChild(link);
-                            resultsDiv.appendChild(li);
-
+                        const li = createLinkAllResult(input.value);
+                        resultsDiv.appendChild(li);
 
                         for(let i = 0; i < Object.keys(animes.data).length; i++) {
                             createNewAnimeResult(animes?.data[i]);
@@ -64,7 +51,6 @@
 
             searchBtn.addEventListener('click', (e) => {
                 if (input.value.length > 1) {
-                    console.log('btn');
                     const url = new URL("{{route('animes.search')}}");
                     url.searchParams.append('q', input.value);
                     window.location.href =  url.href;
@@ -81,8 +67,20 @@
             if (!response.statusText === 'OK') {
                 throw new Error(`[fetchError] : An error occured when fetching animes with code: ${response.status}`);
             }
-            console.log(await response);
             return response?.data;
+        };
+
+        const createLinkAllResult = (inputVal) => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            const url = new URL("{{route('animes.search')}}");
+            url.searchParams.append('q', inputVal);
+            link.href = url.href;
+            link.innerText = 'See all results';
+            li.classList.add('mb-4', 'text-center');
+            link.classList.add('mx-auto');
+            li.appendChild(link);
+            return li;
         };
 
         const createNewAnimeResult = (anime) => {

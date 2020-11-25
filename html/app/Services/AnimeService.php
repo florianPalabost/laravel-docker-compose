@@ -12,22 +12,28 @@ use GuzzleHttp\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Client\HttpClientException;
+use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
-define('PAGINATE', 30);
 class AnimeService
 {
+    public const PAGINATE = 30;
+
     protected $logger;
+    protected $genreService;
+
     /**
      * AnimeService constructor.
      * @param Logger $logger
+     * @param GenreService $genreService
      */
-    public function __construct(Logger $logger)
+    public function __construct(Logger $logger, GenreService $genreService)
     {
         $this->logger = $logger;
+        $this->genreService = $genreService;
     }
 
     /**
@@ -38,7 +44,7 @@ class AnimeService
     {
         try {
             $animes = DB::table('animes')->whereNotNull('title')->orderBy('title');
-            return $isPaginated ? $animes->paginate(PAGINATE) : $animes->get();
+            return $isPaginated ? $animes->paginate(self::PAGINATE) : $animes->get();
         } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
@@ -78,12 +84,13 @@ class AnimeService
      */
     public function retrieveAnimesWithGenre(Genre $genre)
     {
-        if (empty($genre)) {
+        if (empty($genre) && !isset($genre->name)) {
             throw new \Error('no genre pass to function');
         }
         try {
-            $animes = Genre::where('name', $genre->name)->firstOrFail()->animes()->orderBy('title');
-            return Anime::count() > 30 ? $animes->paginate(PAGINATE) : $animes->get();
+            $genre = $this->genreService->retrieveByName($genre->name);
+            $animes = $genre->animes()->orderBy('title');
+            return Anime::count() > self::PAGINATE ? $animes->paginate(self::PAGINATE) : $animes->get();
         } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }
@@ -161,32 +168,16 @@ class AnimeService
         }
     }
 
-    public function retrieveAnimesWithFilters(array $filters)
+    public function retrieveAnimesWithFilters(array $filters, string $page = '')
     {
-        if (count($filters)  === 1) {
-            return null;
-        }
+        $query = array_key_exists('genres', $filters) ?
+            Anime::with('genres') : Anime::query();
 
-        // retrieve each genre_ids
-        if (isset($filters['genres'])) {
-            $genreIDs = [];
-            foreach ($filters['genres'] as $genre) {
-                $genreIDs[] = Genre::where('name', $genre)->pluck('id');
-            }
+        $query = $query->filterBy($filters);
 
-            // we find all the animes which posseded all the genres put in filters
-            $animeIds = AnimeGenre::whereIn('genre_id', $genreIDs)->pluck('anime_id');
-        }
-
-        $query = DB::table('animes');
-        if (isset($animeIds)) {
-            $query = $query->whereIn('animes.id', $animeIds);
-        }
-        if (isset($animeIds)) {
-            $query = $query->whereIn('animes.subtype', $filters['subtypes']);
-        }
-
-        return $query->paginate(PAGINATE);
+        return !empty($page) ?
+            $query->paginate(AnimeService::PAGINATE, ['*'], 'page', $page) :
+            $query->paginate(AnimeService::PAGINATE);
     }
 
     /**
@@ -196,7 +187,7 @@ class AnimeService
     public function retrieveLikeAnimes(string $search)
     {
         try {
-            return Anime::where('title', 'ilike', '%' . $search . '%')->paginate(PAGINATE);
+            return Anime::where('title', 'ilike', '%' . $search . '%')->paginate(self::PAGINATE);
         } catch (AnimeNotFoundException | ModelNotFoundException $e) {
             return $e->getMessage();
         }

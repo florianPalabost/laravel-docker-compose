@@ -6,6 +6,7 @@ use App\Anime;
 use App\Exceptions\AnimeNotFoundException;
 use App\Genre;
 use App\Services\AnimeService;
+use App\Services\GenreService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -22,13 +23,20 @@ class AnimesController extends Controller
     protected $logger;
 
     /**
+     * @var GenreService
+     */
+    protected $genreService;
+
+    /**
      * AnimesController constructor.
      * @param AnimeService $animeService
+     * @param GenreService $genreService
      * @param Logger $logger
      */
-    public function __construct(AnimeService $animeService, Logger $logger)
+    public function __construct(AnimeService $animeService, GenreService $genreService, Logger $logger)
     {
         $this->animeService = $animeService;
+        $this->genreService = $genreService;
         $this->logger = $logger;
     }
 
@@ -41,19 +49,13 @@ class AnimesController extends Controller
      */
     public function index(Request $request)
     {
-        //todo service
-        $genres = Genre::all()->pluck('name');
+        $genres = $this->genreService->retrieveAllGenres('name');
         $filters = $request->only('genres', 'subtypes') ?? [];
 
         if ($request->has('genres') || $request->has('subtypes')) {
-            $query = array_key_exists('genres', $filters) ?
-                Anime::with('genres') : Anime::query();
-
-            $query = $query->filterBy($filters);
-
             $animes = $request->has('page') ?
-                $query->paginate(30, ['*'], 'page', $request->get('page')) :
-                $query->paginate(30);
+                $this->animeService->retrieveAnimesWithFilters($filters, $request->get('page')) :
+                $this->animeService->retrieveAnimesWithFilters($filters);
         } else {
             $animes = $this->animeService->retrieveAnimes();
         }
@@ -150,7 +152,7 @@ class AnimesController extends Controller
             // add search value to the url pagination
             $animes->appends(['q' => $request->get('q')])->links();
 
-            // check if ajax request or not with this header
+            // check if request is ajax or not with this header
             if ($request->hasHeader('X-Requested-With')) {
                 return count($animes) > 0 ? $animes : [];
             }

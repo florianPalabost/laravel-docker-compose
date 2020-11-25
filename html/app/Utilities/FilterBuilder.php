@@ -34,21 +34,22 @@ class FilterBuilder
 
             if (is_array($value)) {
                 foreach ($value as $val) {
-                    if (strlen($val)) {
-                        (new $class($this->query))->handle($val);
-                    } else {
-                        (new $class($this->query))->handle();
-                    }
+                    $this->checkToHandle($class, $val);
                 }
             } else {
-                if (strlen($value)) {
-                    (new $class($this->query))->handle($value);
-                } else {
-                    (new $class($this->query))->handle();
-                }
+                $this->checkToHandle($class, $value);
             }
         }
 
         return $this->query;
+    }
+
+    public function checkToHandle($class, $val)
+    {
+        if (strlen($val)) {
+            (new $class($this->query))->handle($val);
+        } else {
+            (new $class($this->query))->handle();
+        }
     }
 }
