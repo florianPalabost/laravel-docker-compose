@@ -32,24 +32,35 @@
         </div>
 
         <div class="row mt-5">
-            <div class="col-12">
-                <h2>News animes added</h2>
+            <div class="col-4 mx-auto">
+                <h2>% du nombre d'animes par genre</h2>
+                <canvas id="chartPie" width="250" height="250"></canvas>
             </div>
-            <div class="col-12">
-                <table class="table table-bordered yajra-datatable w-100">
-                    <thead>
-                    <tr>
-                        <td>No</td>
-                        <td>Title</td>
-                        <td>Action</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+            <div class="col-4 mx-auto">
+                <h2>Représentation du nombre d'animes par genre</h2>
+                <canvas id="myChart" width="250" height="250"></canvas>
             </div>
-
         </div>
+
+{{--        <div class="row mt-5">--}}
+{{--            <div class="col-12">--}}
+{{--                <h2>News animes added</h2>--}}
+{{--            </div>--}}
+{{--            <div class="col-12">--}}
+{{--                <table class="table table-bordered yajra-datatable w-100">--}}
+{{--                    <thead>--}}
+{{--                    <tr>--}}
+{{--                        <td>No</td>--}}
+{{--                        <td>Title</td>--}}
+{{--                        <td>Action</td>--}}
+{{--                    </tr>--}}
+{{--                    </thead>--}}
+{{--                    <tbody>--}}
+{{--                    </tbody>--}}
+{{--                </table>--}}
+{{--            </div>--}}
+
+{{--        </div>--}}
     </div>
 @endsection
 @section('css')
@@ -60,21 +71,55 @@
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            const table = $('.yajra-datatable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('dashboard') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'title', name: 'title'},
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: true,
-                        searchable: true
-                    },
-                ]
-            });
+            const jsonData = JSON.parse('<?= $genres; ?>');
+
+            const labels = jsonData.map(genre => genre.name);
+            const animesCount = jsonData.map(genre => genre.animes);
+
+            createChart('radar', 'myChart', labels, animesCount);
+            createChart('pie', 'chartPie', labels, animesCount);
+
+
+
+            {{--const table = $('.yajra-datatable').DataTable({--}}
+            {{--    processing: true,--}}
+            {{--    serverSide: true,--}}
+            {{--    ajax: "{{ route('dashboard') }}",--}}
+            {{--    columns: [--}}
+            {{--        {data: 'DT_RowIndex', name: 'DT_RowIndex'},--}}
+            {{--        {data: 'title', name: 'title'},--}}
+            {{--        {--}}
+            {{--            data: 'action',--}}
+            {{--            name: 'action',--}}
+            {{--            orderable: true,--}}
+            {{--            searchable: true--}}
+            {{--        },--}}
+            {{--    ]--}}
+            {{--});--}}
         });
+
+        const createChart = (canvasType, canvasId, labels, values) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const data = {
+                labels,
+                datasets: [{
+                    label: 'Count animes by genre',
+                    data: values
+                }]
+            };
+            const options = {
+                plugins: {
+                    colorschemes: {
+                        scheme: 'brewer.Paired12'
+                    }
+                }
+            };
+
+            const myChart = new Chart(ctx, {
+                type: canvasType,
+                data,
+                options
+            });
+        };
     </script>
 @endpush

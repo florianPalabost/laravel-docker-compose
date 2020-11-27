@@ -12,7 +12,6 @@ use GuzzleHttp\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Client\HttpClientException;
-use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

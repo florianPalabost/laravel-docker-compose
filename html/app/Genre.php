@@ -10,10 +10,12 @@ class Genre extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
+    protected $appends = ['animes'];
     protected $fillable = [
         'id',
         'name',
-        'description'
+        'description',
+        'animes'
     ];
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -21,5 +23,8 @@ class Genre extends Model
     public function animes()
     {
         return $this->belongsToMany('App\Anime', 'anime_genre');
+    }
+    public function getAnimesAttribute() {
+        return $this->animes()->count();
     }
 }

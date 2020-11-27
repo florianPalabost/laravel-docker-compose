@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Genre;
 use App\Services\AnimeService;
 use App\User;
 use Illuminate\Auth\Events\Authenticated;
@@ -46,6 +47,7 @@ class UsersController extends Controller
                 return $e->getMessage();
             }
         }
+        $genres = Genre::all();
 
         $animes = $this->animeService->retrieveAnimes(false);
 
@@ -69,7 +71,7 @@ class UsersController extends Controller
             }
         }
 
-        return view('users.dashboard', compact('animes', 'statsAnimes'));
+        return view('users.dashboard', compact('animes', 'statsAnimes', 'genres'));
     }
 
     /**
